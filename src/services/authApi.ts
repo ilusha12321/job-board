@@ -15,19 +15,26 @@ export async function registerUser(
   username: string,
   email: string,
   password: string,
-): Promise<User> {
+  role: "jobseeker" | "employer",
+): Promise<User | null> {
   const hashedPassword = await hashPassword(password);
+  const infoUser = localStorage.getItem("users");
 
+  const usersList: User[] = infoUser ? JSON.parse(infoUser) : [];
+
+  const isExist = usersList.some(
+    (user) => user.username === username || user.email === email,
+  );
+  if (isExist) {
+    return null;
+  }
   const newUser: User = {
     id: Date.now().toString(),
     username,
     email,
     passwordHash: hashedPassword,
+    role,
   };
-
-  const infoUser = localStorage.getItem("users");
-
-  const usersList: User[] = infoUser ? JSON.parse(infoUser) : [];
 
   usersList.push(newUser);
 

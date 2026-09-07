@@ -6,6 +6,7 @@ export interface Vacancy {
   description: string;
   salary: string;
   company: Company;
+  createdBy: string;
 }
 export interface Company {
   name: string;

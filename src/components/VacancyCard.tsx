@@ -4,12 +4,17 @@ import { Link } from "react-router-dom";
 type VacancyCardProp = {
   vacancy: Vacancy;
   isClickable?: boolean;
+  displayNumber?: number;
 };
 
-const VacancyCard = ({ vacancy, isClickable = false }: VacancyCardProp) => {
+const VacancyCard = ({
+  vacancy,
+  isClickable = false,
+  displayNumber,
+}: VacancyCardProp) => {
   const cardContext = (
     <>
-      <div>{vacancy.id}</div>
+      {displayNumber && <div>{displayNumber}</div>}
       <div>{vacancy.title}</div>
       <div>{vacancy.type}</div>
       <div>{vacancy.location}</div>

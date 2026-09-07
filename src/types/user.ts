@@ -3,4 +3,5 @@ export interface User {
   username: string;
   email: string;
   passwordHash: string;
+  role: "jobseeker" | "employer";
 }

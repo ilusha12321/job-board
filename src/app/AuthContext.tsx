@@ -11,9 +11,23 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem("currentUser");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return null;
+  });
+  function handleSetUser(newUser: User | null) {
+    setUser(newUser);
+    if (newUser) {
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem("currentUser");
+    }
+  }
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser: handleSetUser }}>
       {children}
     </AuthContext.Provider>
   );
