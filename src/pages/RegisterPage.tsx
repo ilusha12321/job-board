@@ -45,6 +45,7 @@ export default function RegisterPage() {
         id="username"
         type="text"
         value={username}
+        required
         onChange={(event) => setUsername(event.target.value)}
       />
       <label htmlFor="email">Email :</label>
@@ -52,6 +53,7 @@ export default function RegisterPage() {
         id="email"
         type="email"
         value={email}
+        required
         onChange={(event) => setEmail(event.target.value)}
       />
       <label htmlFor="password">Password :</label>
@@ -59,6 +61,7 @@ export default function RegisterPage() {
         id="password"
         type="password"
         value={password}
+        required
         onChange={(event) => setPassword(event.target.value)}
       />
       <button type="submit">Register</button>

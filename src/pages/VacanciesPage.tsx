@@ -30,7 +30,9 @@ const VacanciesPage = () => {
 
   return (
     <>
-      {user ? <Link to="/create-vacancy">Create vacancy</Link> : null}
+      {user && user.role === "employer" ? (
+        <Link to="/create-vacancy">Create vacancy</Link>
+      ) : null}
       <label htmlFor="searchTerm">Search by title: </label>
       <input
         id="searchTerm"

@@ -20,7 +20,7 @@ const router = createBrowserRouter([
       { path: "register", element: <RegisterPage /> },
       { path: "login", element: <LoginPage /> },
       {
-        element: <ProtectedRoute />,
+        element: <ProtectedRoute requiredRole="employer" />,
         children: [
           { path: "create-vacancy", element: <CreateVacancyPage /> },
           { path: "edit-vacancy/:id", element: <EditVacancyPage /> },

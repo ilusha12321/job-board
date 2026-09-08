@@ -1,8 +1,17 @@
 import { useAuth } from "./AuthContext";
 
 import { Navigate, Outlet } from "react-router-dom";
-export default function ProtectedRoute() {
+type ProtectedRouteProps = {
+  requiredRole?: "jobseeker" | "employer";
+};
+export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
   const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to="/vacancies" />;
+  }
 
-  return <>{user ? <Outlet /> : <Navigate to="/login" />}</>;
+  return <Outlet />;
 }

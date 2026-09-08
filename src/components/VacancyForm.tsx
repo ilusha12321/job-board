@@ -65,12 +65,13 @@ export default function VacancyForm({
         id="title"
         type="text"
         value={title}
+        required
         onChange={(event) => setTitle(event.target.value)}
       />
       <label htmlFor="type">Type: </label>
       <select
         id="type"
-
+        required
         value={type}
         onChange={(event) => setType(event.target.value)}
       >
@@ -87,6 +88,7 @@ export default function VacancyForm({
         id="location"
         type="text"
         value={location}
+        required
         onChange={(event) => setLocation(event.target.value)}
       />
       <label htmlFor="description">Description: </label>
@@ -94,6 +96,7 @@ export default function VacancyForm({
         id="description"
         type="text"
         value={description}
+        required
         onChange={(event) => setDescription(event.target.value)}
       />
       <label htmlFor="salary">Salary: </label>
@@ -101,6 +104,7 @@ export default function VacancyForm({
         id="salary"
         type="text"
         value={salary}
+        required
         onChange={(event) => setSalary(event.target.value)}
       />
       <label htmlFor="company.name">Company name: </label>
@@ -108,6 +112,7 @@ export default function VacancyForm({
         id="company.name"
         type="text"
         value={company.name}
+        required
         onChange={(event) => handleSetCompanyChange("name", event.target.value)}
       />
       <label htmlFor="company.contactEmail">Contact email: </label>
@@ -115,6 +120,7 @@ export default function VacancyForm({
         id="company.contactEmail"
         type="email"
         value={company.contactEmail}
+        required
         onChange={(event) =>
           handleSetCompanyChange("contactEmail", event.target.value)
         }
