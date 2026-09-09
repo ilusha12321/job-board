@@ -12,6 +12,10 @@ function Layout() {
           <>
             <span>{user.username}</span>
             <button onClick={() => setUser(null)}>Logout</button>
+
+            {user.role === "jobseeker" && (
+              <Link to="/my-applications">My applications </Link>
+            )}
           </>
         ) : (
           <>

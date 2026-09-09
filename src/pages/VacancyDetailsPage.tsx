@@ -6,11 +6,17 @@ import VacancyCard from "../components/VacancyCard";
 import { deleteVacancy } from "../services/vacancyApi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
+import {
+  hasApplied,
+  applyToVacancy,
+  cancelApplication,
+} from "../services/applicationApi";
 
 const VacancyDetailsPage = () => {
   const [state, setState] = useState<Vacancy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [applied, setApplied] = useState<boolean | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
@@ -28,6 +34,25 @@ const VacancyDetailsPage = () => {
     navigate("/vacancies");
   }
 
+  async function handleApplyToggle() {
+    if (!user || !id) {
+      return;
+    }
+    if (applied) {
+      const result = cancelApplication(user.id, id);
+      if (!result) {
+        return;
+      }
+      setApplied(false);
+    } else {
+      const result = applyToVacancy(user.id, id);
+      if (!result) {
+        return;
+      }
+      setApplied(true);
+    }
+  }
+
   useEffect(() => {
     const loadData = async () => {
       if (!id) {
@@ -36,9 +61,12 @@ const VacancyDetailsPage = () => {
       const result = await getVacanciesById(id);
       setIsLoading(false);
       setState(result);
+      if (user) {
+        setApplied(hasApplied(user.id, id));
+      }
     };
     loadData();
-  }, [id]);
+  }, [user, id]);
 
   return isLoading ? (
     "Loading..."
@@ -56,6 +84,13 @@ const VacancyDetailsPage = () => {
           ? state.company.description
           : "There is no description."}
       </div>
+
+      {user && user.role === "jobseeker" && (
+        <button onClick={handleApplyToggle}>
+          {applied ? "Cancel application" : "Apply"}
+        </button>
+      )}
+
       {user && user.role === "employer" && user.id === state.createdBy && (
         <>
           {error && <p>{error}</p>}

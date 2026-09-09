@@ -8,6 +8,7 @@ import LoginPage from "../pages/LoginPage";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateVacancyPage from "../pages/CreateVacancyPage";
 import EditVacancyPage from "../pages/EditVacancyPage";
+import MyApplicationsPage from "../pages/MyApplicationsPage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,12 @@ const router = createBrowserRouter([
         children: [
           { path: "create-vacancy", element: <CreateVacancyPage /> },
           { path: "edit-vacancy/:id", element: <EditVacancyPage /> },
+        ],
+      },
+      {
+        element: <ProtectedRoute requiredRole="jobseeker" />,
+        children: [
+          { path: "my-applications", element: <MyApplicationsPage /> },
         ],
       },
     ],

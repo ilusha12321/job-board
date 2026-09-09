@@ -3,10 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getVacanciesById, updateVacancy } from "../services/vacancyApi";
 import { type Vacancy } from "../types/vacancy";
 import VacancyForm from "../components/VacancyForm";
+import { useAuth } from "../app/AuthContext";
 
 export default function EditVacancyPage() {
   const [data, setData] = useState<Vacancy | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const { id } = useParams<{ id: string }>();
   useEffect(() => {
@@ -20,7 +22,6 @@ export default function EditVacancyPage() {
       }
       setData(result);
     };
-
     editData();
   }, [id]);
 
@@ -42,15 +43,17 @@ export default function EditVacancyPage() {
   }
   return (
     <>
-      {data ? (
+      {!data ? (
+        "Loading..."
+      ) : user?.id !== data.createdBy ? (
+        "You don't have permission to edit this vacancy."
+      ) : (
         <VacancyForm
           onSubmit={handleSubmit}
           submitLabel="Update"
           error={error}
           initialData={data}
         />
-      ) : (
-        "Loading..."
       )}
     </>
   );
