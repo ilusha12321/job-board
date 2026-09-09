@@ -68,40 +68,6 @@ Job Board — інформаційна система створення та п
 * Git
 * GitHub
 
-📂 Project structure
-
-src/
-├── app/
-│   ├── AuthContext.tsx
-│   ├── ProtectedRoute.tsx
-│   └── router.tsx
-│
-├── components/
-│   ├── Layout.tsx
-│   ├── VacancyCard.tsx
-│   └── VacancyForm.tsx
-│
-├── pages/
-│   ├── CreateVacancyPage.tsx
-│   ├── EditVacancyPage.tsx
-│   ├── HomePage.tsx
-│   ├── LoginPage.tsx
-│   ├── RegisterPage.tsx
-│   ├── VacanciesPage.tsx
-│   └── VacancyDetailsPage.tsx
-│
-├── services/
-│   ├── authApi.ts
-│   ├── vacancyApi.ts
-│   └── applicationApi.ts
-│
-├── types/
-│   ├── user.ts
-│   ├── vacancy.ts
-│   └── application.ts
-│
-├── App.tsx
-└── main.tsx
 
 🧩 Architecture
 
