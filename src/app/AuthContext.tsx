@@ -19,10 +19,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return null;
   });
   function handleSetUser(newUser: User | null) {
-    setUser(newUser);
     if (newUser) {
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      const { passwordHash, ...safeUser } = newUser;
+      setUser(safeUser);
+      localStorage.setItem("currentUser", JSON.stringify(safeUser));
     } else {
+      setUser(null);
       localStorage.removeItem("currentUser");
     }
   }

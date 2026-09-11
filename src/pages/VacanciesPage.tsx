@@ -7,17 +7,23 @@ import { useAuth } from "../app/AuthContext";
 
 const VacanciesPage = () => {
   const [state, setState] = useState<Vacancy[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedType, setSelectedType] = useState<string>("");
+  const [status, setStatus] = useState<"loading" | "error" | "success">(
+    "loading",
+  );
 
   const { user } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
       const result = await getVacancies();
+      if (result === null) {
+        setStatus("error");
+        return;
+      }
+      setStatus("success");
       setState(result);
-      setIsLoading(false);
     };
     loadData();
   }, []);
@@ -53,7 +59,9 @@ const VacanciesPage = () => {
       </select>
       <h1>Vacantion list</h1>
       <div>
-        {isLoading ? (
+        {status === "error" ? (
+          <p>Error </p>
+        ) : status === "loading" ? (
           <p>Loading... </p>
         ) : filteredVacancies.length === 0 ? (
           <p>No vacancies found.</p>
