@@ -1,42 +1,47 @@
-Job Board — pracya.ua
+# Job Board — pracya.ua
 
-Веб-застосунок для пошуку та створення вакансій.
+Вебзастосунок для пошуку та створення вакансій.
 
-Проєкт розроблений на React + TypeScript з використанням React Router та REST API. Користувачі можуть переглядати, шукати та фільтрувати вакансії, а також створювати вакансії або подавати заявки на них залежно від своєї ролі.
-📌 About the project
+Проєкт розроблений на **React + TypeScript** з використанням **React Router** та **REST API**. Користувачі можуть переглядати, шукати та фільтрувати вакансії, а також створювати вакансії або подавати заявки на них залежно від своєї ролі.
 
-Job Board — інформаційна система створення та пошуку вакансій.
+## Preview
+
+
+
+## About the project
+
+**Job Board** — інформаційна система створення та пошуку вакансій.
 
 Основна мета проєкту — реалізувати frontend-застосунок, який дозволяє взаємодіяти з вакансіями та користувачами залежно від їхньої ролі.
 
 У застосунку передбачено дві ролі:
 
-* Job Seeker — пошук вакансій та подача заявок.
-* Employer — створення, редагування та видалення власних вакансій.
+* **Job Seeker** — пошук вакансій та подача заявок.
+* **Employer** — створення, редагування та видалення власних вакансій.
 
-✨ Features
+## Features
 
-🔐 Authentication
+### Authentication
 
 * Реєстрація користувача.
 * Авторизація.
 * Вихід із системи.
-* Збереження поточного користувача в localStorage.
+* Збереження поточного користувача в `localStorage`.
 * Хешування пароля за допомогою Web Crypto API.
 * Розподіл користувачів за ролями.
 
-🔎 Vacancies
+### Vacancies
 
 * Отримання вакансій через REST API.
 * Перегляд списку вакансій.
 * Пошук вакансій за назвою.
 * Фільтрація вакансій за типом зайнятості.
 * Перегляд детальної інформації про вакансію.
-* Інформація про компанію та контакти.
+* Відображення інформації про компанію та контактів.
 
-👨‍💼 Employer
+### Employer
 
-Користувач із роллю employer може:
+Користувач із роллю `employer` може:
 
 * створювати вакансії;
 * редагувати власні вакансії;
@@ -44,18 +49,20 @@ Job Board — інформаційна система створення та п
 
 Редагування та видалення доступні тільки автору вакансії.
 
-👨‍💻 Job Seeker
+### Job Seeker
 
-Користувач із роллю jobseeker може:
+Користувач із роллю `jobseeker` може:
 
 * переглядати вакансії;
 * шукати вакансії;
 * фільтрувати вакансії;
 * подавати заявку на вакансію;
 * скасовувати власну заявку;
-* повторна заявка на одну вакансію не створюється.
+* переглядати власні заявки.
 
-🛠️ Technologies
+Повторна заявка на одну вакансію не створюється.
+
+## Technologies
 
 * React
 * TypeScript
@@ -68,12 +75,11 @@ Job Board — інформаційна система створення та п
 * Git
 * GitHub
 
+## Architecture
 
-🧩 Architecture
+Проєкт розділений на декілька логічних рівнів.
 
-Проєкт розділений на декілька логічних рівнів:
-
-app
+### app
 
 Містить глобальну логіку застосунку:
 
@@ -81,19 +87,28 @@ app
 * protected routes;
 * React Router configuration.
 
-components
+### components
 
 Перевикористовувані UI-компоненти:
 
-* layout;
-* vacancy card;
-* vacancy form.
+* Layout;
+* VacancyCard;
+* VacancyForm.
 
-pages
+### pages
 
-Компоненти окремих сторінок застосунку.
+Компоненти окремих сторінок застосунку:
 
-services
+* HomePage;
+* LoginPage;
+* RegisterPage;
+* VacanciesPage;
+* VacancyDetailsPage;
+* CreateVacancyPage;
+* EditVacancyPage;
+* MyApplicationsPage.
+
+### services
 
 Логіка взаємодії з API та робота з даними:
 
@@ -101,7 +116,7 @@ services
 * vacancies;
 * applications.
 
-types
+### types
 
 TypeScript-типи основних сутностей:
 
@@ -110,10 +125,11 @@ TypeScript-типи основних сутностей:
 * Company;
 * Application.
 
-🔄 Application flow
+## Application flow
 
 Система заявок пов’язує користувача з вакансією:
 
+```text
 User
   │
   │ userId
@@ -123,16 +139,17 @@ Application
   │ vacancyId
   ▼
 Vacancy
+```
 
 Кожна заявка містить інформацію про користувача та вакансію, на яку він подав заявку.
 
 Перед створенням заявки виконується перевірка, чи не подавав користувач заявку на цю вакансію раніше.
 
-🌐 API
+## API
 
 Для роботи з вакансіями використовується REST API:
 
-https://fakejobs-api.vercel.app/jobs
+`https://fakejobs-api.vercel.app/jobs`
 
 API використовується для:
 
@@ -142,65 +159,73 @@ API використовується для:
 * редагування вакансії;
 * видалення вакансії.
 
-Authentication та applications реалізовані на frontend-рівні з використанням localStorage.
+Authentication та applications реалізовані на frontend-рівні з використанням `localStorage`.
 
-Проєкт є frontend-пет-проєктом і не має власного backend/database.
+На поточному етапі проєкт не має власного backend та бази даних.
 
-🔒 Protected Routes
+## Protected Routes
 
-Для сторінок, доступних тільки авторизованим користувачам, використовується ProtectedRoute.
+Для сторінок, доступних тільки авторизованим користувачам, використовується `ProtectedRoute`.
 
 Неавторизований користувач автоматично перенаправляється на сторінку входу.
 
-Додатково перевіряється роль користувача та його зв’язок із вакансією.
+Додатково перевіряється роль користувача та доступ до відповідних дій.
 
-📱 Responsive Design
+## Responsive Design
 
-Інтерфейс розробляється з урахуванням різних розмірів екрана та можливості використання застосунку на desktop і mobile пристроях.
+Інтерфейс розроблений з урахуванням різних розмірів екрана та можливості використання застосунку на desktop і mobile пристроях.
 
-⚙️ Installation
+## Installation
 
 Клонуйте репозиторій:
 
+```bash
 git clone https://github.com/ilusha12321/job-board.git
+```
 
 Перейдіть у папку проєкту:
 
+```bash
 cd job-board
+```
 
 Встановіть залежності:
 
+```bash
 npm install
+```
 
 Запустіть development server:
 
+```bash
 npm run dev
+```
 
 Після запуску відкрийте адресу, яку покаже Vite у терміналі.
 
-📋 Available scripts
+## Available scripts
 
-npm run dev
+### `npm run dev`
 
 Запуск development server.
 
-npm run build
+### `npm run build`
 
 Створення production build.
 
-npm run lint
+### `npm run lint`
 
 Перевірка коду за допомогою ESLint.
 
-npm run preview
+### `npm run preview`
 
 Перегляд production build локально.
 
-🎯 Project goals
+## Project Goals
 
 Під час розробки проєкту я практикую:
 
-* React components;
+* React Components;
 * React Hooks;
 * Context API;
 * TypeScript;
@@ -212,10 +237,10 @@ npm run preview
 * form handling;
 * state management;
 * reusable components;
-* Git/GitHub;
+* Git / GitHub;
 * структурування frontend-проєкту.
 
-🚧 Future improvements
+## Future Improvements
 
 Плануються подальші покращення:
 
@@ -226,19 +251,10 @@ npm run preview
 * сторінка користувача;
 * перегляд заявок роботодавцем;
 * статуси заявок;
-* власний backend та база даних;
+* власний backend;
+* PostgreSQL database;
 * deployment.
 
-👨‍💻 Author
-
-Ilya Kholodov
-
-Junior Frontend Developer
-
-Technologies
-
+**Technologies:**
 React · TypeScript · JavaScript · React Router · REST API · Git
-
-GitHub
-
 
