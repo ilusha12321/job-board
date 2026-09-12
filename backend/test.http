@@ -1,0 +1,7 @@
+POST http://localhost:3000/api/applications
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3YzRkYzU1MS1mYmIzLTQyN2ItOTMyZi1jNmI3ZDZlM2YyMDUiLCJyb2xlIjoiam9ic2Vla2VyIiwiaWF0IjoxNzg5MTY0OTY4LCJleHAiOjE3ODk3Njk3Njh9.a9aDgBuW0qtbsLFONjIV76DfCFb_1jcXkwHSeMIM91I; Max-Age=604800; Path=/; Expires=Fri, 18 Sep 2026 22:16:08 GMT; HttpOnly; SameSite=Strict
+Content-Type: application/json
+
+{
+  "vacancy_id": "ID_ВАКАНСИИ"
+}
