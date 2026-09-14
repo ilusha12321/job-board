@@ -5,7 +5,10 @@ type ProtectedRouteProps = {
   requiredRole?: "jobseeker" | "employer";
 };
 export default function ProtectedRoute({ requiredRole }: ProtectedRouteProps) {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+  if (isLoading === true) {
+    return "Loading...";
+  }
   if (!user) {
     return <Navigate to="/login" />;
   }

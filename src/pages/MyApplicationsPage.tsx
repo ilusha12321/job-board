@@ -10,19 +10,25 @@ export default function MyApplicationsPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { user } = useAuth();
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-    const applications = getMyApplications(user.id);
-    const loadData = async () => {
-      const result = await getVacancies();
+    if (!user) return;
 
-      const filteredApplication = result.filter((vacancy) => {
-        return applications.some((app) => app.vacancyId === vacancy.id);
-      });
-      setVacancyList(filteredApplication);
+    const loadData = async () => {
+      const applications = await getMyApplications();
+      const result = await getVacancies();
+      if (!result) {
+        setVacancyList([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const filtered = result.filter((vacancy) =>
+        applications.some((app) => app.vacancyId === vacancy.id),
+      );
+
+      setVacancyList(filtered);
       setIsLoading(false);
     };
+
     loadData();
   }, [user]);
   return (

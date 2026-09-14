@@ -14,3 +14,29 @@ export interface Company {
   contactEmail: string;
   contactPhone: string;
 }
+
+export interface RawVacancy {
+  id: string;
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  salary: string | null;
+  company_name: string;
+  company_description: string | null;
+  company_contact_email: string;
+  company_contact_phone: string | null;
+  created_by: string;
+  created_at: string;
+}
+export interface RawVacancyInput {
+  title: string;
+  type: string;
+  location: string;
+  description: string;
+  salary: string;
+  company_name: string;
+  company_description: string;
+  company_contact_email: string;
+  company_contact_phone: string;
+}

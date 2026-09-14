@@ -1,35 +1,44 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { type User } from "../types/user";
+import { getCurrentUser, logoutUser } from "../services/authApi";
 import React from "react";
+
 type AuthContextType = {
   user: User | null;
+  isLoading: boolean;
   setUser: (param: User | null) => void;
 };
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem("currentUser");
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return null;
-  });
-  function handleSetUser(newUser: User | null) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+      setIsLoading(false);
+    };
+    loadUser();
+  }, []);
+
+  async function handleSetUser(newUser: User | null) {
     if (newUser) {
-      const { passwordHash, ...safeUser } = newUser;
-      setUser(safeUser);
-      localStorage.setItem("currentUser", JSON.stringify(safeUser));
+      setUser(newUser);
     } else {
+      await logoutUser();
       setUser(null);
-      localStorage.removeItem("currentUser");
     }
   }
+
   return (
-    <AuthContext.Provider value={{ user, setUser: handleSetUser }}>
+    <AuthContext.Provider value={{ user, isLoading, setUser: handleSetUser }}>
       {children}
     </AuthContext.Provider>
   );

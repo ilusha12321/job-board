@@ -39,13 +39,13 @@ const VacancyDetailsPage = () => {
       return;
     }
     if (applied) {
-      const result = cancelApplication(user.id, id);
+      const result = await cancelApplication(id);
       if (!result) {
         return;
       }
       setApplied(false);
     } else {
-      const result = applyToVacancy(user.id, id);
+      const result = await applyToVacancy(id);
       if (!result) {
         return;
       }
@@ -62,7 +62,8 @@ const VacancyDetailsPage = () => {
       setIsLoading(false);
       setState(result);
       if (user) {
-        setApplied(hasApplied(user.id, id));
+        const result = await hasApplied(id);
+        setApplied(result);
       }
     };
     loadData();

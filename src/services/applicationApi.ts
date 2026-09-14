@@ -1,54 +1,73 @@
-// src/services/applicationApi.ts
-import { type Application } from "../types/application";
+import { type Application, type RawApplication } from "../types/application";
 
-function getApplications(): Application[] {
-  const raw = localStorage.getItem("applications");
-  return raw ? JSON.parse(raw) : [];
+const API_URL = "http://localhost:3000/api/applications";
+
+function adaptApplication(raw: RawApplication): Application {
+  return {
+    id: raw.id,
+    userId: raw.user_id,
+    vacancyId: raw.vacancy_id,
+    appliedAt: raw.created_at,
+    status: raw.status,
+  };
 }
 
-function saveApplications(applications: Application[]): void {
-  localStorage.setItem("applications", JSON.stringify(applications));
+export async function hasApplied(vacancyId: string): Promise<boolean> {
+  const myApplications = await getMyApplications();
+  return myApplications.some((app) => app.vacancyId === vacancyId);
 }
 
-export function hasApplied(userId: string, vacancyId: string): boolean {
-  const applications = getApplications();
-  return applications.some(
-    (app) => app.userId === userId && app.vacancyId === vacancyId,
-  );
-}
-
-export function applyToVacancy(
-  userId: string,
+export async function applyToVacancy(
   vacancyId: string,
-): Application | null {
-  if (hasApplied(userId, vacancyId)) {
+): Promise<Application | null> {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ vacancy_id: vacancyId }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data: RawApplication = await response.json();
+    return adaptApplication(data);
+  } catch (error) {
+    console.error(error);
     return null;
   }
-  const applications = getApplications();
-  const newApplication: Application = {
-    id: Date.now().toString(),
-    userId,
-    vacancyId,
-    appliedAt: new Date().toISOString(),
-    status: "delivered",
-  };
-  applications.push(newApplication);
-  saveApplications(applications);
-  return newApplication;
 }
 
-export function cancelApplication(userId: string, vacancyId: string): boolean {
-  const applications = getApplications();
-  const filtered = applications.filter(
-    (app) => !(app.userId === userId && app.vacancyId === vacancyId),
-  );
-  if (filtered.length === applications.length) {
+export async function cancelApplication(vacancyId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/${vacancyId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error(error);
     return false;
   }
-  saveApplications(filtered);
-  return true;
 }
 
-export function getMyApplications(userId: string): Application[] {
-  return getApplications().filter((app) => app.userId === userId);
+export async function getMyApplications(): Promise<Application[]> {
+  try {
+    const response = await fetch(`${API_URL}/my`, {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data: RawApplication[] = await response.json();
+    return data.map((item) => adaptApplication(item));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 }
