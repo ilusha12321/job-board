@@ -1,5 +1,9 @@
-import { type Application, type RawApplication } from "../types/application";
-
+import {
+  type Application,
+  type RawApplication,
+  type EmployerApplication,
+  type RawEmployerApplication,
+} from "../types/application";
 const API_URL = "http://localhost:3000/api/applications";
 
 function adaptApplication(raw: RawApplication): Application {
@@ -9,6 +13,20 @@ function adaptApplication(raw: RawApplication): Application {
     vacancyId: raw.vacancy_id,
     appliedAt: raw.created_at,
     status: raw.status,
+  };
+}
+function adaptEmployerApplication(
+  raw: RawEmployerApplication,
+): EmployerApplication {
+  return {
+    id: raw.id,
+    vacancyId: raw.vacancy_id,
+    vacancyTitle: raw.title,
+    applicantUsername: raw.username,
+    applicantEmail: raw.email,
+    appliedAt: raw.created_at,
+    status: raw.status,
+    resumeName: raw.resume_name,
   };
 }
 
@@ -66,6 +84,26 @@ export async function getMyApplications(): Promise<Application[]> {
 
     const data: RawApplication[] = await response.json();
     return data.map((item) => adaptApplication(item));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+export async function getEmployerApplications(): Promise<
+  EmployerApplication[]
+> {
+  try {
+    const response = await fetch(`${API_URL}/employer`, {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data: RawEmployerApplication[] = await response.json();
+    return data.map((item) => adaptEmployerApplication(item));
   } catch (error) {
     console.error(error);
     return [];

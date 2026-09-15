@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import CreateVacancyPage from "../pages/CreateVacancyPage";
 import EditVacancyPage from "../pages/EditVacancyPage";
 import MyApplicationsPage from "../pages/MyApplicationsPage";
+import EmployerApplicationsPage from "../pages/EmployerApplicationsPage";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
         children: [
           { path: "create-vacancy", element: <CreateVacancyPage /> },
           { path: "edit-vacancy/:id", element: <EditVacancyPage /> },
+          {
+            path: "employer-applications",
+            element: <EmployerApplicationsPage />,
+          },
         ],
       },
       {

@@ -27,7 +27,21 @@ router.post("/register", async (req, res) => {
       [username, email, passwordHash, role],
     );
 
-    res.status(201).json(result.rows[0]);
+    const user = result.rows[0];
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" },
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).json(user);
   } catch (error) {
     const dbError = error as { code?: string };
 
@@ -92,6 +106,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 });
+
 router.get("/me", authenticate, async (req, res) => {
   try {
     const result = await pool.query(
@@ -111,6 +126,7 @@ router.get("/me", authenticate, async (req, res) => {
     res.status(500).json({ message: "Failed to fetch user" });
   }
 });
+
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -118,4 +134,5 @@ router.post("/logout", (req, res) => {
   });
   res.json({ message: "Logged out" });
 });
+
 export default router;

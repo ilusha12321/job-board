@@ -120,5 +120,27 @@ router.get(
     }
   },
 );
+router.get(
+  "/employer",
+  authenticate,
+  requireRole("employer"),
+  async (req, res) => {
+    try {
+      const result = await pool.query(
+        `SELECT applications.*, vacancies.title, users.username, users.email
+       FROM applications
+       JOIN vacancies ON vacancies.id = applications.vacancy_id
+       JOIN users ON users.id = applications.user_id
+       WHERE vacancies.created_by = $1
+       ORDER BY applications.created_at DESC`,
+        [req.user!.userId],
+      );
 
+      res.json(result.rows);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to fetch applications" });
+    }
+  },
+);
 export default router;

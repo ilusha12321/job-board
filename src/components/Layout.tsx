@@ -16,6 +16,9 @@ function Layout() {
             {user.role === "jobseeker" && (
               <Link to="/my-applications">My applications </Link>
             )}
+            {user.role === "employer" && (
+              <Link to="/employer-applications">Applications </Link>
+            )}
           </>
         ) : (
           <>
