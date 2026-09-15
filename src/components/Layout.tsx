@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
-
+import { logoutUser } from "../services/authApi";
 function Layout() {
   const { user, setUser } = useAuth();
 
@@ -11,7 +11,14 @@ function Layout() {
         {user ? (
           <>
             <span>{user.username}</span>
-            <button onClick={() => setUser(null)}>Logout</button>
+            <button
+              onClick={async () => {
+                await logoutUser();
+                setUser(null);
+              }}
+            >
+              Logout
+            </button>
 
             {user.role === "jobseeker" && (
               <Link to="/my-applications">My applications </Link>
