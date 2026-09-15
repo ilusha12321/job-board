@@ -17,12 +17,43 @@ const VacancyDetailsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [applied, setApplied] = useState<boolean | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
   const { user } = useAuth();
 
   const navigate = useNavigate();
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      setResumeFile(null);
+      return;
+    }
+
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setFileError("Only PDF and DOCX files are allowed");
+      setResumeFile(null);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setFileError("File must be under 5MB");
+      setResumeFile(null);
+      return;
+    }
+
+    setFileError(null);
+    setResumeFile(file);
+  }
 
   async function handleDelete() {
     setError(null);
@@ -35,20 +66,15 @@ const VacancyDetailsPage = () => {
   }
 
   async function handleApplyToggle() {
-    if (!user || !id) {
-      return;
-    }
+    if (!user || !id) return;
+
     if (applied) {
       const result = await cancelApplication(id);
-      if (!result) {
-        return;
-      }
+      if (!result) return;
       setApplied(false);
     } else {
-      const result = await applyToVacancy(id);
-      if (!result) {
-        return;
-      }
+      const result = await applyToVacancy(id, resumeFile);
+      if (!result) return;
       setApplied(true);
     }
   }
@@ -86,12 +112,24 @@ const VacancyDetailsPage = () => {
           : "There is no description."}
       </div>
 
+      {user && user.role === "jobseeker" && !applied && (
+        <div>
+          <label htmlFor="resume">Resume (optional, PDF/DOCX, max 5MB):</label>
+          <input
+            id="resume"
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+          />
+          {fileError && <p>{fileError}</p>}
+        </div>
+      )}
+
       {user && user.role === "jobseeker" && (
         <button onClick={handleApplyToggle}>
           {applied ? "Cancel application" : "Apply"}
         </button>
       )}
-
       {user && user.role === "employer" && user.id === state.createdBy && (
         <>
           {error && <p>{error}</p>}

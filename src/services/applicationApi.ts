@@ -37,13 +37,19 @@ export async function hasApplied(vacancyId: string): Promise<boolean> {
 
 export async function applyToVacancy(
   vacancyId: string,
+  resumeFile: File | null,
 ): Promise<Application | null> {
   try {
+    const formData = new FormData();
+    formData.append("vacancy_id", vacancyId);
+    if (resumeFile) {
+      formData.append("resume", resumeFile);
+    }
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ vacancy_id: vacancyId }),
+      body: formData,
     });
 
     if (!response.ok) {

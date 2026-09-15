@@ -1,42 +1,54 @@
 import { Router } from "express";
 import { pool } from "../db.js";
 import { authenticate, requireRole } from "../middleware/auth.js";
+import { upload } from "../middleware/upload.js";
+import path from "path";
 
 const router = Router();
 
-router.post("/", authenticate, requireRole("jobseeker"), async (req, res) => {
-  const { vacancy_id } = req.body;
+router.post(
+  "/",
+  authenticate,
+  requireRole("jobseeker"),
+  upload.single("resume"),
+  async (req, res) => {
+    const { vacancy_id } = req.body;
 
-  if (!vacancy_id) {
-    return res.status(400).json({ message: "vacancy_id is required" });
-  }
-
-  try {
-    const result = await pool.query(
-      `INSERT INTO applications (user_id, vacancy_id)
-       VALUES ($1, $2)
-       RETURNING *`,
-      [req.user!.userId, vacancy_id],
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    const dbError = error as { code?: string };
-
-    if (dbError.code === "23505") {
-      return res
-        .status(409)
-        .json({ message: "You already applied to this vacancy" });
+    if (!vacancy_id) {
+      return res.status(400).json({ message: "vacancy_id is required" });
     }
 
-    if (dbError.code === "23503") {
-      return res.status(404).json({ message: "Vacancy not found" });
-    }
+    const resumeName = req.file ? req.file.originalname : null;
+    const resumePath = req.file ? req.file.filename : null;
+    const resumeSize = req.file ? req.file.size : null;
 
-    console.error(error);
-    res.status(500).json({ message: "Failed to create application" });
-  }
-});
+    try {
+      const result = await pool.query(
+        `INSERT INTO applications (user_id, vacancy_id, resume_name, resume_path, resume_size)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [req.user!.userId, vacancy_id, resumeName, resumePath, resumeSize],
+      );
+
+      res.status(201).json(result.rows[0]);
+    } catch (error) {
+      const dbError = error as { code?: string };
+
+      if (dbError.code === "23505") {
+        return res
+          .status(409)
+          .json({ message: "You already applied to this vacancy" });
+      }
+
+      if (dbError.code === "23503") {
+        return res.status(404).json({ message: "Vacancy not found" });
+      }
+
+      console.error(error);
+      res.status(500).json({ message: "Failed to create application" });
+    }
+  },
+);
 
 router.get("/my", authenticate, requireRole("jobseeker"), async (req, res) => {
   try {
@@ -143,4 +155,39 @@ router.get(
     }
   },
 );
+router.get("/:id/resume", authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT applications.user_id, applications.resume_path, applications.resume_name,
+                vacancies.created_by
+         FROM applications
+         JOIN vacancies ON vacancies.id = applications.vacancy_id
+         WHERE applications.id = $1`,
+      [req.params.id],
+    );
+
+    const application = result.rows[0];
+
+    if (!application || !application.resume_path) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    const isApplicant = application.user_id === req.user!.userId;
+    const isVacancyOwner = application.created_by === req.user!.userId;
+
+    if (!isApplicant && !isVacancyOwner) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const filePath = path.join(
+      process.cwd(),
+      "uploads",
+      application.resume_path,
+    );
+    res.download(filePath, application.resume_name);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to download resume" });
+  }
+});
 export default router;

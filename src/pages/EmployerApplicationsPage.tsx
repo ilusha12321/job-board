@@ -33,7 +33,19 @@ export default function EmployerApplicationsPage() {
             <div>
               Applied: {new Date(app.appliedAt).toLocaleString("uk-UA")}
             </div>
-            <div>{app.resumeName ? app.resumeName : "No resume attached"}</div>
+            <div>
+              {app.resumeName ? (
+                <a
+                  href={`http://localhost:3000/api/applications/${app.id}/resume`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Download resume: {app.resumeName}
+                </a>
+              ) : (
+                "No resume attached"
+              )}
+            </div>
           </div>
         ))
       )}
