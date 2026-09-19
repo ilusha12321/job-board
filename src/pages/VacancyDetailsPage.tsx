@@ -1,10 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getVacanciesById } from "../services/vacancyApi";
+import { getVacanciesById, deleteVacancy } from "../services/vacancyApi";
 import { type Vacancy } from "../types/vacancy";
-import VacancyCard from "../components/VacancyCard";
-import { deleteVacancy } from "../services/vacancyApi";
-import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
 import {
   hasApplied,
@@ -21,10 +18,9 @@ const VacancyDetailsPage = () => {
   const [fileError, setFileError] = useState<string | null>(null);
 
   const { id } = useParams<{ id: string }>();
-
   const { user } = useAuth();
-
   const navigate = useNavigate();
+
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] ?? null;
 
@@ -88,58 +84,121 @@ const VacancyDetailsPage = () => {
       setIsLoading(false);
       setState(result);
       if (user) {
-        const result = await hasApplied(id);
-        setApplied(result);
+        const appliedResult = await hasApplied(id);
+        setApplied(appliedResult);
       }
     };
     loadData();
   }, [user, id]);
 
-  return isLoading ? (
-    "Loading..."
-  ) : state ? (
-    <>
-      <h1>{state.title}</h1>
-      <VacancyCard vacancy={state} />
-      <div>
-        {state.description ? state.description : "There is no description."}
-      </div>
-      <div>{state.company.contactPhone}</div>
-      <div>{state.company.contactEmail}</div>
-      <div>
-        {state.company.description
-          ? state.company.description
-          : "There is no description."}
-      </div>
+  if (isLoading) {
+    return <p className="text-slate-500">Loading...</p>;
+  }
 
-      {user && user.role === "jobseeker" && !applied && (
-        <div>
-          <label htmlFor="resume">Resume (optional, PDF/DOCX, max 5MB):</label>
-          <input
-            id="resume"
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleFileChange}
-          />
-          {fileError && <p>{fileError}</p>}
+  if (!state) {
+    return <p className="text-slate-500">Vacancy not found.</p>;
+  }
+
+  return (
+    <article className="max-w-3xl space-y-8">
+      <header className="space-y-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            {state.title}
+          </h1>
+          <p className="text-lg text-slate-700">{state.company.name}</p>
+          <p className="text-xl font-semibold text-slate-900">
+            {state.salary ? state.salary : "Salary is hidden"}
+          </p>
+          <p className="text-sm text-slate-600">
+            {state.location}
+            <span className="mx-1.5 text-slate-300">·</span>
+            {state.type}
+          </p>
         </div>
-      )}
 
-      {user && user.role === "jobseeker" && (
-        <button onClick={handleApplyToggle}>
-          {applied ? "Cancel application" : "Apply"}
-        </button>
-      )}
-      {user && user.role === "employer" && user.id === state.createdBy && (
-        <>
-          {error && <p>{error}</p>}
-          <Link to={`/edit-vacancy/${id}`}>Edit</Link>
-          <button onClick={handleDelete}>Delete</button>
-        </>
-      )}
-    </>
-  ) : (
-    "Vacancy not found."
+        {user?.role === "jobseeker" && (
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <button
+              onClick={handleApplyToggle}
+              className={
+                applied
+                  ? "inline-flex items-center justify-center rounded-md bg-slate-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
+                  : "inline-flex items-center justify-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+              }
+            >
+              {applied ? "Cancel application" : "Apply"}
+            </button>
+
+            {!applied && (
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    id="resume"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="sr-only"
+                  />
+                  <label
+                    htmlFor="resume"
+                    className="inline-flex cursor-pointer items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    {resumeFile ? "Змінити файл" : "Вибрати файл"}
+                  </label>
+                  {resumeFile && (
+                    <span className="text-sm text-slate-600">
+                      {resumeFile.name}
+                    </span>
+                  )}
+                </div>
+                {fileError && (
+                  <p className="text-sm text-red-600">{fileError}</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {user?.role === "employer" && user.id === state.createdBy && (
+          <div className="flex flex-wrap items-center gap-3">
+            {error && <p className="w-full text-sm text-red-600">{error}</p>}
+            <Link
+              to={`/edit-vacancy/${id}`}
+              className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Edit
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </header>
+
+      <section className="space-y-4 border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-semibold text-slate-900">Про вакансію</h2>
+        <p className="whitespace-pre-wrap text-base leading-relaxed text-slate-700">
+          {state.description ? state.description : "There is no description."}
+        </p>
+      </section>
+
+      <section className="space-y-4 border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-semibold text-slate-900">Про компанію</h2>
+        <p className="whitespace-pre-wrap text-base leading-relaxed text-slate-700">
+          {state.company.description
+            ? state.company.description
+            : "There is no description."}
+        </p>
+        <div className="space-y-1 text-sm text-slate-600">
+          {state.company.contactEmail && <p>{state.company.contactEmail}</p>}
+          {state.company.contactPhone && <p>{state.company.contactPhone}</p>}
+        </div>
+      </section>
+    </article>
   );
 };
 

@@ -155,6 +155,56 @@ router.get(
     }
   },
 );
+router.patch(
+  "/:id/status",
+  authenticate,
+  requireRole("employer"),
+  async (req, res) => {
+    const { status } = req.body;
+
+    const allowedStatuses = ["delivered", "reviewed", "invite for interview"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid application status" });
+    }
+
+    try {
+      const result = await pool.query(
+        `UPDATE applications
+         SET status = $1
+         WHERE id = $2
+           AND vacancy_id IN (
+             SELECT id
+             FROM vacancies
+             WHERE created_by = $3
+           )
+         RETURNING *`,
+        [status, req.params.id, req.user!.userId],
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+
+      const application = result.rows[0];
+
+      const detailsResult = await pool.query(
+        `SELECT applications.*, vacancies.title, users.username, users.email
+         FROM applications
+         JOIN vacancies ON vacancies.id = applications.vacancy_id
+         JOIN users ON users.id = applications.user_id
+         WHERE applications.id = $1`,
+        [application.id],
+      );
+
+      res.json(detailsResult.rows[0]);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to update application status" });
+    }
+  },
+);
+
 router.get("/:id/resume", authenticate, async (req, res) => {
   try {
     const result = await pool.query(

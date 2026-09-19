@@ -115,3 +115,28 @@ export async function getEmployerApplications(): Promise<
     return [];
   }
 }
+export async function updateApplicationStatus(
+  applicationId: string,
+  status: EmployerApplication["status"],
+): Promise<EmployerApplication | null> {
+  try {
+    const response = await fetch(`${API_URL}/${applicationId}/status`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data: RawEmployerApplication = await response.json();
+    return adaptEmployerApplication(data);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
