@@ -1,79 +1,34 @@
 import { type User } from "../types/user";
+import { apiFetch, ApiError } from "./apiClient";
 
-const API_URL = "http://localhost:3000/api/auth";
-
-export async function registerUser(
+export function registerUser(
   username: string,
   email: string,
   password: string,
   role: "jobseeker" | "employer",
-): Promise<User | null> {
-  try {
-    const response = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username, email, password, role }),
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+): Promise<User> {
+  return apiFetch<User>("/auth/register", {
+    method: "POST",
+    json: { username, email, password, role },
+  });
 }
 
-export async function loginUser(
-  username: string,
-  password: string,
-): Promise<User | null> {
-  try {
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+export function loginUser(username: string, password: string): Promise<User> {
+  return apiFetch<User>("/auth/login", {
+    method: "POST",
+    json: { username, password },
+  });
 }
 
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const response = await fetch(`${API_URL}/me`, {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return await response.json();
+    return await apiFetch<User>("/auth/me");
   } catch (error) {
-    console.error(error);
-    return null;
+    if (error instanceof ApiError && error.status === 401) return null;
+    throw error;
   }
 }
 
-export async function logoutUser(): Promise<void> {
-  try {
-    await fetch(`${API_URL}/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-  } catch (error) {
-    console.error(error);
-  }
+export function logoutUser(): Promise<void> {
+  return apiFetch<void>("/auth/logout", { method: "POST" });
 }

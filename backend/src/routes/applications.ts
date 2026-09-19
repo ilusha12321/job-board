@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { pool } from "../db.js";
 import { authenticate, requireRole } from "../middleware/auth.js";
-import { upload } from "../middleware/upload.js";
 import path from "path";
-
+import { upload, removeUploadedFile } from "../middleware/upload.js";
+import { validate, uuidParam, isUuid } from "../middleware/validate.js";
+import { statusSchema } from "../schemas.js";
 const router = Router();
+router.param("id", uuidParam);
+router.param("vacancyId", uuidParam);
 
 router.post(
   "/",
@@ -14,8 +17,9 @@ router.post(
   async (req, res) => {
     const { vacancy_id } = req.body;
 
-    if (!vacancy_id) {
-      return res.status(400).json({ message: "vacancy_id is required" });
+    if (!isUuid(vacancy_id)) {
+      await removeUploadedFile(req.file?.filename);
+      return res.status(400).json({ message: "Valid vacancy_id is required" });
     }
 
     const resumeName = req.file ? req.file.originalname : null;
@@ -32,6 +36,7 @@ router.post(
 
       res.status(201).json(result.rows[0]);
     } catch (error) {
+      await removeUploadedFile(resumePath);
       const dbError = error as { code?: string };
 
       if (dbError.code === "23505") {
@@ -159,6 +164,7 @@ router.patch(
   "/:id/status",
   authenticate,
   requireRole("employer"),
+  validate(statusSchema),
   async (req, res) => {
     const { status } = req.body;
 

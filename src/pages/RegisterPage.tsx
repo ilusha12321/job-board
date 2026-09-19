@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { registerUser } from "../services/authApi";
 import { useAuth } from "../app/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { ApiError, getErrorMessage } from "../services/apiClient";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState<string>("");
@@ -17,14 +18,17 @@ export default function RegisterPage() {
   ) {
     formSubmission.preventDefault();
     setError(null);
-    const regInfo = await registerUser(username, email, password, role);
-    if (!regInfo) {
-      setError("A user with this username/email already exists");
-      return;
+    try {
+      const newUser = await registerUser(username, email, password, role);
+      setUser(newUser);
+      navigate("/");
+    } catch (e) {
+      setError(
+        e instanceof ApiError && e.status === 409
+          ? "A user with this username/email already exists"
+          : getErrorMessage(e),
+      );
     }
-
-    setUser(regInfo);
-    navigate("/");
   }
 
   return (

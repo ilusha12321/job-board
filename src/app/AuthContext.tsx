@@ -1,47 +1,62 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  type ReactNode,
+} from "react";
 import { type User } from "../types/user";
 import { getCurrentUser, logoutUser } from "../services/authApi";
-import React from "react";
 
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
-  setUser: (param: User | null) => void;
+  setUser: (user: User | null) => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-type AuthProviderProps = {
-  children: React.ReactNode;
-};
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const loadUser = async () => {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      setIsLoading(false);
+    let cancelled = false;
+
+    getCurrentUser()
+      .then((currentUser) => {
+        if (!cancelled) setUser(currentUser);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
     };
-    loadUser();
   }, []);
 
-  async function handleSetUser(newUser: User | null) {
-    if (newUser) {
-      setUser(newUser);
-    } else {
-      await logoutUser();
-      setUser(null);
-    }
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, isLoading, setUser: handleSetUser }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user,
+      isLoading,
+      setUser,
+      logout: async () => {
+        try {
+          await logoutUser();
+        } catch (error) {
+          console.error(error);
+        }
+        setUser(null);
+      },
+    }),
+    [user, isLoading],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

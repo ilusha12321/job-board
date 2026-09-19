@@ -1,9 +1,8 @@
 import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
-import { logoutUser } from "../services/authApi";
 
 function Layout() {
-  const { user, setUser } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -59,10 +58,7 @@ function Layout() {
                 </span>
 
                 <button
-                  onClick={async () => {
-                    await logoutUser();
-                    setUser(null);
-                  }}
+                  onClick={logout}
                   className="rounded-md border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Logout

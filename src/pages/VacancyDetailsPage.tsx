@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getVacanciesById, deleteVacancy } from "../services/vacancyApi";
+import { getVacancyById, deleteVacancy } from "../services/vacancyApi";
+import { getErrorMessage } from "../services/apiClient";
 import { type Vacancy } from "../types/vacancy";
 import { useAuth } from "../app/AuthContext";
 import {
@@ -16,6 +17,8 @@ const VacancyDetailsPage = () => {
   const [applied, setApplied] = useState<boolean | null>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -52,43 +55,74 @@ const VacancyDetailsPage = () => {
   }
 
   async function handleDelete() {
-    setError(null);
-    if (!id) {
+    if (!id || isDeleting) return;
+    if (
+      !window.confirm(
+        "Delete this vacancy? All applications to it will be deleted too.",
+      )
+    ) {
       return;
     }
-    const result = await deleteVacancy(id);
-    if (!result) return setError("Unable to delete job");
-    navigate("/vacancies");
+    setError(null);
+    setIsDeleting(true);
+    try {
+      await deleteVacancy(id);
+      navigate("/vacancies");
+    } catch (e) {
+      setError(getErrorMessage(e, "Unable to delete job"));
+      setIsDeleting(false);
+    }
   }
 
   async function handleApplyToggle() {
-    if (!user || !id) return;
-
-    if (applied) {
-      const result = await cancelApplication(id);
-      if (!result) return;
-      setApplied(false);
-    } else {
-      const result = await applyToVacancy(id, resumeFile);
-      if (!result) return;
-      setApplied(true);
+    if (!user || !id || isApplying) return;
+    setError(null);
+    setIsApplying(true);
+    try {
+      if (applied) {
+        await cancelApplication(id);
+        setApplied(false);
+      } else {
+        await applyToVacancy(id, resumeFile);
+        setApplied(true);
+        setResumeFile(null);
+      }
+    } catch (e) {
+      setError(getErrorMessage(e));
+    } finally {
+      setIsApplying(false);
     }
   }
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!id) {
-        return;
-      }
-      const result = await getVacanciesById(id);
+    if (!id) {
       setIsLoading(false);
-      setState(result);
-      if (user) {
-        const appliedResult = await hasApplied(id);
-        setApplied(appliedResult);
+      return;
+    }
+    let cancelled = false;
+
+    const loadData = async () => {
+      try {
+        const vacancy = await getVacancyById(id);
+        if (cancelled) return;
+        setState(vacancy);
+
+        if (user?.role === "jobseeker") {
+          const appliedResult = await hasApplied(id);
+          if (!cancelled) setApplied(appliedResult);
+        }
+      } catch (e) {
+        console.error(e);
+        if (!cancelled) setState(null);
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     };
+
     loadData();
+    return () => {
+      cancelled = true;
+    };
   }, [user, id]);
 
   if (isLoading) {
@@ -117,17 +151,42 @@ const VacancyDetailsPage = () => {
           </p>
         </div>
 
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        {!user && (
+          <div className="flex flex-wrap items-center gap-3 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <span>Want to apply for this job?</span>
+            <Link
+              to="/login"
+              state={{ from: `/vacancies/${id}` }}
+              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+            >
+              Login to apply
+            </Link>
+            <Link
+              to="/register"
+              className="font-medium text-blue-600 hover:text-blue-700"
+            >
+              or create an account
+            </Link>
+          </div>
+        )}
         {user?.role === "jobseeker" && (
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <button
               onClick={handleApplyToggle}
+              disabled={isApplying || applied === null}
               className={
-                applied
+                (applied
                   ? "inline-flex items-center justify-center rounded-md bg-slate-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
-                  : "inline-flex items-center justify-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+                  : "inline-flex items-center justify-center rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700") +
+                " disabled:cursor-not-allowed disabled:opacity-60"
               }
             >
-              {applied ? "Cancel application" : "Apply"}
+              {isApplying
+                ? "Please wait..."
+                : applied
+                  ? "Cancel application"
+                  : "Apply"}
             </button>
 
             {!applied && (
@@ -162,7 +221,6 @@ const VacancyDetailsPage = () => {
 
         {user?.role === "employer" && user.id === state.createdBy && (
           <div className="flex flex-wrap items-center gap-3">
-            {error && <p className="w-full text-sm text-red-600">{error}</p>}
             <Link
               to={`/edit-vacancy/${id}`}
               className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
@@ -171,9 +229,10 @@ const VacancyDetailsPage = () => {
             </Link>
             <button
               onClick={handleDelete}
-              className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              disabled={isDeleting}
+              className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         )}

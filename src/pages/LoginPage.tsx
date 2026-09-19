@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { loginUser } from "../services/authApi";
 import { useAuth } from "../app/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ApiError, getErrorMessage } from "../services/apiClient";
 
 export default function LoginPage() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from ?? "/";
   const { setUser } = useAuth();
   const navigate = useNavigate();
 
@@ -14,15 +18,22 @@ export default function LoginPage() {
     formSubmission: React.FormEvent<HTMLFormElement>,
   ) {
     formSubmission.preventDefault();
+    if (isSubmitting) return;
     setError(null);
-    const loggedInUser = await loginUser(username, password);
-    if (!loggedInUser) {
-      return setError("Invalid login or password");
+    setIsSubmitting(true);
+    try {
+      const loggedInUser = await loginUser(username, password);
+      setUser(loggedInUser);
+      navigate(from);
+    } catch (e) {
+      setError(
+        e instanceof ApiError && e.status === 401
+          ? "Invalid login or password"
+          : getErrorMessage(e),
+      );
+      setIsSubmitting(false);
     }
-    setUser(loggedInUser);
-    navigate("/");
   }
-
   return (
     <div className="mx-auto w-full max-w-md">
       <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -72,9 +83,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
 

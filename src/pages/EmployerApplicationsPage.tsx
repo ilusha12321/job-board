@@ -4,6 +4,7 @@ import {
   getEmployerApplications,
   updateApplicationStatus,
 } from "../services/applicationApi";
+import { API_URL } from "../services/apiClient";
 import type { EmployerApplication } from "../types/application";
 
 type StatusFilter = "all" | "delivered" | "reviewed" | "invite for interview";
@@ -18,13 +19,23 @@ export default function EmployerApplicationsPage() {
   >(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadData = async () => {
-      const result = await getEmployerApplications();
-      setApplications(result);
-      setIsLoading(false);
+      try {
+        const result = await getEmployerApplications();
+        if (!cancelled) setApplications(result);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
     };
 
     loadData();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filteredApplications = useMemo(() => {
@@ -61,25 +72,19 @@ export default function EmployerApplicationsPage() {
     status: EmployerApplication["status"],
   ) {
     setUpdatingApplicationId(applicationId);
-
-    const updatedApplication = await updateApplicationStatus(
-      applicationId,
-      status,
-    );
-
-    if (updatedApplication) {
-      setApplications((currentApplications) =>
-        currentApplications.map((application) =>
-          application.id === updatedApplication.id
-            ? updatedApplication
-            : application,
+    try {
+      const updated = await updateApplicationStatus(applicationId, status);
+      setApplications((current) =>
+        current.map((application) =>
+          application.id === updated.id ? updated : application,
         ),
       );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUpdatingApplicationId(null);
     }
-
-    setUpdatingApplicationId(null);
   }
-
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -258,7 +263,7 @@ export default function EmployerApplicationsPage() {
               <div className="mt-5 border-t border-slate-100 pt-4">
                 {application.resumeName ? (
                   <a
-                    href={`http://localhost:3000/api/applications/${application.id}/resume`}
+                    href={`${API_URL}/applications/${application.id}/resume`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 hover:underline"

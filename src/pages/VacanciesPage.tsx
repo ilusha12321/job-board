@@ -28,19 +28,22 @@ const VacanciesPage = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    const loadData = async () => {
-      const result = await getVacancies();
+    let cancelled = false;
 
-      if (result === null) {
-        setStatus("error");
-        return;
-      }
+    getVacancies()
+      .then((result) => {
+        if (cancelled) return;
+        setState(result);
+        setStatus("success");
+      })
+      .catch((error) => {
+        console.error(error);
+        if (!cancelled) setStatus("error");
+      });
 
-      setStatus("success");
-      setState(result);
+    return () => {
+      cancelled = true;
     };
-
-    loadData();
   }, []);
 
   const filteredVacancies = state.filter((vacancy) => {

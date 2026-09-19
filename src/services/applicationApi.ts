@@ -4,7 +4,7 @@ import {
   type EmployerApplication,
   type RawEmployerApplication,
 } from "../types/application";
-const API_URL = "http://localhost:3000/api/applications";
+import { apiFetch } from "./apiClient";
 
 function adaptApplication(raw: RawApplication): Application {
   return {
@@ -15,6 +15,7 @@ function adaptApplication(raw: RawApplication): Application {
     status: raw.status,
   };
 }
+
 function adaptEmployerApplication(
   raw: RawEmployerApplication,
 ): EmployerApplication {
@@ -30,6 +31,11 @@ function adaptEmployerApplication(
   };
 }
 
+export async function getMyApplications(): Promise<Application[]> {
+  const data = await apiFetch<RawApplication[]>("/applications/my");
+  return data.map(adaptApplication);
+}
+
 export async function hasApplied(vacancyId: string): Promise<boolean> {
   const myApplications = await getMyApplications();
   return myApplications.some((app) => app.vacancyId === vacancyId);
@@ -38,105 +44,40 @@ export async function hasApplied(vacancyId: string): Promise<boolean> {
 export async function applyToVacancy(
   vacancyId: string,
   resumeFile: File | null,
-): Promise<Application | null> {
-  try {
-    const formData = new FormData();
-    formData.append("vacancy_id", vacancyId);
-    if (resumeFile) {
-      formData.append("resume", resumeFile);
-    }
-
-    const response = await fetch(API_URL, {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data: RawApplication = await response.json();
-    return adaptApplication(data);
-  } catch (error) {
-    console.error(error);
-    return null;
+): Promise<Application> {
+  const formData = new FormData();
+  formData.append("vacancy_id", vacancyId);
+  if (resumeFile) {
+    formData.append("resume", resumeFile);
   }
+
+  const data = await apiFetch<RawApplication>("/applications", {
+    method: "POST",
+    body: formData,
+  });
+  return adaptApplication(data);
 }
 
-export async function cancelApplication(vacancyId: string): Promise<boolean> {
-  try {
-    const response = await fetch(`${API_URL}/${vacancyId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-
-    return response.ok;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-}
-
-export async function getMyApplications(): Promise<Application[]> {
-  try {
-    const response = await fetch(`${API_URL}/my`, {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data: RawApplication[] = await response.json();
-    return data.map((item) => adaptApplication(item));
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+export async function cancelApplication(vacancyId: string): Promise<void> {
+  await apiFetch<void>(`/applications/${vacancyId}`, { method: "DELETE" });
 }
 
 export async function getEmployerApplications(): Promise<
   EmployerApplication[]
 > {
-  try {
-    const response = await fetch(`${API_URL}/employer`, {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data: RawEmployerApplication[] = await response.json();
-    return data.map((item) => adaptEmployerApplication(item));
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+  const data = await apiFetch<RawEmployerApplication[]>(
+    "/applications/employer",
+  );
+  return data.map(adaptEmployerApplication);
 }
+
 export async function updateApplicationStatus(
   applicationId: string,
   status: EmployerApplication["status"],
-): Promise<EmployerApplication | null> {
-  try {
-    const response = await fetch(`${API_URL}/${applicationId}/status`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data: RawEmployerApplication = await response.json();
-    return adaptEmployerApplication(data);
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+): Promise<EmployerApplication> {
+  const data = await apiFetch<RawEmployerApplication>(
+    `/applications/${applicationId}/status`,
+    { method: "PATCH", json: { status } },
+  );
+  return adaptEmployerApplication(data);
 }

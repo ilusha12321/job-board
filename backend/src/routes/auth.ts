@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { pool } from "../db.js";
 import { authenticate } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { registerSchema, loginSchema } from "../schemas.js";
 
 const router = Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", validate(registerSchema), async (req, res) => {
   const { username, email, password, role } = req.body;
 
   if (!username || !email || !password || !role) {
@@ -56,7 +58,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", validate(loginSchema), async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {

@@ -34,3 +34,9 @@ CREATE TABLE applications (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   UNIQUE (user_id, vacancy_id)
 );
+CREATE INDEX IF NOT EXISTS idx_vacancies_created_by ON vacancies(created_by);
+CREATE INDEX IF NOT EXISTS idx_vacancies_created_at ON vacancies(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_applications_vacancy_id ON applications(vacancy_id);
+UPDATE vacancies SET salary = NULL WHERE salary = '';
+UPDATE vacancies SET company_description = NULL WHERE company_description = '';
+UPDATE vacancies SET company_contact_phone = NULL WHERE company_contact_phone = '';
