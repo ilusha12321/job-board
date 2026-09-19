@@ -40,3 +40,12 @@ export interface RawVacancyInput {
   company_contact_email: string;
   company_contact_phone: string;
 }
+export interface RawMyVacancy extends RawVacancy {
+  applications_count: number;
+  new_count: number;
+}
+
+export interface MyVacancy extends Vacancy {
+  applicationsCount: number;
+  newCount: number;
+}

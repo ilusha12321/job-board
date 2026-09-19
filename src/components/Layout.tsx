@@ -41,12 +41,20 @@ function Layout() {
             )}
 
             {user?.role === "employer" && (
-              <Link
-                to="/employer-applications"
-                className="transition-colors hover:text-slate-900"
-              >
-                Applications
-              </Link>
+              <>
+                <Link
+                  to="/my-vacancies"
+                  className="transition-colors hover:text-slate-900"
+                >
+                  My vacancies
+                </Link>
+                <Link
+                  to="/employer-applications"
+                  className="transition-colors hover:text-slate-900"
+                >
+                  Applications
+                </Link>
+              </>
             )}
           </nav>
 

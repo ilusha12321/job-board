@@ -18,6 +18,25 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch vacancies" });
   }
 });
+router.get("/mine", authenticate, requireRole("employer"), async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT v.*,
+              COUNT(a.id)::int AS applications_count,
+              COUNT(a.id) FILTER (WHERE a.status = 'delivered')::int AS new_count
+       FROM vacancies v
+       LEFT JOIN applications a ON a.vacancy_id = v.id
+       WHERE v.created_by = $1
+       GROUP BY v.id
+       ORDER BY v.created_at DESC`,
+      [req.user!.userId],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch vacancies" });
+  }
+});
 
 router.get("/:id", async (req, res) => {
   try {

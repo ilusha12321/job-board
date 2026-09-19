@@ -10,6 +10,7 @@ import CreateVacancyPage from "../pages/CreateVacancyPage";
 import EditVacancyPage from "../pages/EditVacancyPage";
 import MyApplicationsPage from "../pages/MyApplicationsPage";
 import EmployerApplicationsPage from "../pages/EmployerApplicationsPage";
+import MyVacanciesPage from "../pages/MyVacanciesPage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
             path: "employer-applications",
             element: <EmployerApplicationsPage />,
           },
+          { path: "my-vacancies", element: <MyVacanciesPage /> },
         ],
       },
       {

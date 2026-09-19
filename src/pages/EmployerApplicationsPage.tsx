@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   getEmployerApplications,
   updateApplicationStatus,
@@ -14,6 +14,8 @@ export default function EmployerApplicationsPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const vacancyFilter = searchParams.get("vacancy");
   const [updatingApplicationId, setUpdatingApplicationId] = useState<
     string | null
   >(null);
@@ -51,9 +53,12 @@ export default function EmployerApplicationsPage() {
       const matchesStatus =
         statusFilter === "all" || application.status === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      const matchesVacancy =
+        !vacancyFilter || application.vacancyId === vacancyFilter;
+
+      return matchesSearch && matchesStatus && matchesVacancy;
     });
-  }, [applications, searchTerm, statusFilter]);
+  }, [applications, searchTerm, statusFilter, vacancyFilter]);
 
   const deliveredCount = applications.filter(
     (application) => application.status === "delivered",
@@ -107,6 +112,18 @@ export default function EmployerApplicationsPage() {
         </p>
       </div>
 
+      {vacancyFilter && (
+        <div className="flex items-center justify-between rounded-md border border-blue-100 bg-blue-50 px-4 py-2.5 text-sm text-blue-800">
+          <span>Showing applications for one vacancy only.</span>
+          <button
+            type="button"
+            onClick={() => setSearchParams({})}
+            className="font-medium hover:underline"
+          >
+            Show all
+          </button>
+        </div>
+      )}
       {applications.length > 0 && (
         <div className="border-b border-slate-200">
           <div className="flex flex-wrap gap-x-6 gap-y-2">

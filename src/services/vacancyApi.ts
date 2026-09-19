@@ -2,6 +2,8 @@ import {
   type RawVacancy,
   type RawVacancyInput,
   type Vacancy,
+  type RawMyVacancy,
+  type MyVacancy,
 } from "../types/vacancy";
 import { apiFetch } from "./apiClient";
 
@@ -9,7 +11,14 @@ export async function getVacancies(): Promise<Vacancy[]> {
   const data = await apiFetch<RawVacancy[]>("/vacancies");
   return data.map(adaptVacancy);
 }
-
+export async function getMyVacancies(): Promise<MyVacancy[]> {
+  const data = await apiFetch<RawMyVacancy[]>("/vacancies/mine");
+  return data.map((raw) => ({
+    ...adaptVacancy(raw),
+    applicationsCount: raw.applications_count,
+    newCount: raw.new_count,
+  }));
+}
 export async function getVacancyById(id: string): Promise<Vacancy> {
   const data = await apiFetch<RawVacancy>(`/vacancies/${id}`);
   return adaptVacancy(data);
