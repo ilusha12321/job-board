@@ -1,62 +1,58 @@
 # hardwork
 
-Вебзастосунок для пошуку та створення вакансій.
+**Full-stack вебзастосунок для пошуку та створення вакансій.**
 
-**hardwork** — інформаційна система створення та пошуку вакансій, яка дозволяє користувачам знаходити актуальні вакансії, подавати заявки, а роботодавцям — створювати та керувати власними вакансіями і переглядати заявки кандидатів.
+hardwork — інформаційна система створення та пошуку вакансій, яка об'єднує кандидатів і роботодавців в одному застосунку.
 
-Проєкт розроблений як full-stack застосунок з використанням **React, TypeScript, Node.js, Express та PostgreSQL**.
+Кандидати можуть знаходити вакансії, переглядати детальну інформацію та подавати заявки з резюме. Роботодавці можуть створювати й керувати власними вакансіями, переглядати кандидатів та змінювати статуси заявок.
+
+Проєкт побудований як full-stack застосунок із використанням **React, TypeScript, Node.js, Express та PostgreSQL**.
+
+---
 
 ## Preview
 
+<img width="1492" height="881" alt="image" src="https://github.com/user-attachments/assets/413392ac-916a-48b1-a400-4593e4ba8645" />
 
-## About the project
+<img width="1425" height="904" alt="image" src="https://github.com/user-attachments/assets/c85a91a7-0580-4cc3-9ffc-fed40c69d5a3" />
 
-Основна мета проєкту — створити повноцінну платформу для взаємодії між кандидатами та роботодавцями.
-
-У застосунку передбачено дві основні ролі:
-
-* **Job Seeker** — пошук вакансій та подача заявок.
-* **Employer** — створення, редагування та керування власними вакансіями, а також перегляд заявок кандидатів.
-
-Frontend відповідає за інтерфейс та взаємодію з користувачем, а backend — за authentication, роботу з базою даних, вакансіями та заявками.
 
 ## Features
 
 ### Authentication
 
-* Реєстрація користувача.
-* Авторизація.
-* Вихід із системи.
-* JWT authentication.
-* Зберігання JWT у `httpOnly` cookie.
-* Розподіл користувачів за ролями.
-* Захист приватних маршрутів.
-* Role-based access control.
+* реєстрація та авторизація користувачів;
+* JWT authentication;
+* authentication через HTTP-only cookies;
+* вихід із системи;
+* дві ролі користувачів: `jobseeker` та `employer`;
+* захист приватних маршрутів;
+* role-based access control.
 
 ### Vacancies
 
-* Отримання списку вакансій через REST API.
-* Перегляд детальної інформації про вакансію.
-* Пошук вакансій за назвою.
-* Фільтрація за location.
-* Фільтрація за типом зайнятості.
-* Створення вакансій.
-* Редагування вакансій.
-* Видалення вакансій.
-* Доступ до редагування та видалення тільки для автора вакансії.
+* перегляд списку вакансій;
+* пошук вакансій за назвою;
+* фільтрація за локацією;
+* фільтрація за типом зайнятості;
+* перегляд детальної інформації;
+* створення вакансій;
+* редагування вакансій;
+* видалення вакансій;
+* доступ до редагування та видалення тільки для автора вакансії.
 
 ### Job Seeker
 
 Користувач із роллю `jobseeker` може:
 
 * переглядати вакансії;
-* шукати вакансії;
-* фільтрувати вакансії;
+* шукати та фільтрувати вакансії;
 * переглядати детальну інформацію;
-* подавати заявку на вакансію;
+* подавати заявки;
 * прикріплювати резюме у форматах PDF, DOC та DOCX;
-* скасовувати власну заявку;
-* переглядати власні заявки.
+* переглядати власні заявки;
+* скасовувати власні заявки;
+* відстежувати статус заявки.
 
 Повторна заявка одного користувача на одну вакансію не створюється.
 
@@ -72,11 +68,9 @@ Frontend відповідає за інтерфейс та взаємодію з
 * завантажувати резюме кандидатів;
 * змінювати статус заявки.
 
-Доступ до вакансій та заявок обмежений відповідно до ролі та власника ресурсу.
-
 ### Applications
 
-Система заявок пов'язує користувача з вакансією.
+Система заявок пов'язує кандидата з конкретною вакансією.
 
 Кожна заявка містить:
 
@@ -86,13 +80,13 @@ Frontend відповідає за інтерфейс та взаємодію з
 * статус;
 * прикріплене резюме, якщо воно було додане.
 
-Доступні статуси заявки:
+Доступні статуси:
 
 * `delivered`
 * `reviewed`
 * `invite for interview`
 
-Роботодавець може змінювати статус заявки через інтерфейс застосунку.
+---
 
 ## Technologies
 
@@ -103,9 +97,9 @@ Frontend відповідає за інтерфейс та взаємодію з
 * Vite
 * React Router
 * Tailwind CSS
-* REST API
 * Context API
 * Fetch API
+* REST API
 
 ### Backend
 
@@ -125,32 +119,60 @@ Frontend відповідає за інтерфейс та взаємодію з
 * ESLint
 * npm
 
+---
+
 ## Architecture
 
-Проєкт розділений на frontend та backend частини.
+Проєкт розділений на frontend, backend та database частини:
 
 ```text
-hardwork
+job-board
 │
-├── frontend
+├── src
+│   ├── app
+│   │   ├── AuthContext
+│   │   ├── ProtectedRoute
+│   │   └── router
+│   │
+│   ├── components
+│   │   ├── Layout
+│   │   ├── VacancyCard
+│   │   └── VacancyForm
+│   │
+│   ├── pages
+│   │   ├── HomePage
+│   │   ├── LoginPage
+│   │   ├── RegisterPage
+│   │   ├── VacanciesPage
+│   │   ├── VacancyDetailsPage
+│   │   ├── CreateVacancyPage
+│   │   ├── EditVacancyPage
+│   │   ├── MyApplicationsPage
+│   │   └── EmployerApplicationsPage
+│   │
+│   ├── services
+│   │   ├── authApi
+│   │   ├── vacancyApi
+│   │   └── applicationApi
+│   │
+│   └── types
+│
+├── backend
 │   └── src
-│       ├── app
-│       ├── components
-│       ├── pages
-│       ├── services
-│       ├── types
-│       └── index.css
+│       ├── routes
+│       ├── middleware
+│       ├── db
+│       └── types
 │
-└── backend
-    └── src
-        ├── routes
-        ├── middleware
-        ├── db
-        ├── types
-        └── server
+├── database
+│   └── schema.sql
+│
+└── package.json
 ```
 
 ### Frontend
+
+Frontend відповідає за UI, маршрутизацію, роботу зі станом та взаємодію з backend API.
 
 #### `app`
 
@@ -162,7 +184,7 @@ hardwork
 
 #### `components`
 
-Перевикористовувані UI-компоненти:
+Перевикористовувані компоненти:
 
 * `Layout`;
 * `VacancyCard`;
@@ -170,7 +192,7 @@ hardwork
 
 #### `pages`
 
-Сторінки застосунку:
+Основні сторінки застосунку:
 
 * `HomePage`;
 * `LoginPage`;
@@ -184,7 +206,7 @@ hardwork
 
 #### `services`
 
-Містить логіку взаємодії frontend з backend API:
+Містить логіку взаємодії frontend з REST API:
 
 * authentication;
 * vacancies;
@@ -192,14 +214,11 @@ hardwork
 
 #### `types`
 
-TypeScript-типи основних сутностей:
+TypeScript-типи основних сутностей застосунку.
 
-* `User`;
-* `Vacancy`;
-* `Application`;
-* `EmployerApplication`.
+---
 
-### Backend
+## Backend
 
 Backend побудований на **Node.js + Express + TypeScript**.
 
@@ -211,76 +230,104 @@ Backend побудований на **Node.js + Express + TypeScript**.
 * CRUD операції з вакансіями;
 * створення та керування заявками;
 * перевірку прав доступу;
-* завантаження та отримання резюме.
+* завантаження резюме;
+* отримання резюме кандидатів.
+
+---
 
 ## Database
 
 Для зберігання даних використовується **PostgreSQL**.
 
-Основні сутності:
-
-```text
-User
- │
- ├── Vacancy
- │
- └── Application
-        │
-        └── Vacancy
-```
-
 Основні таблиці:
 
-* `users`
-* `vacancies`
-* `applications`
+```text
+users
+  │
+  ├── vacancies
+  │
+  └── applications
+          │
+          └── vacancies
+```
 
-Зв'язки між сутностями забезпечують цілісність даних та обмежують доступ користувачів до ресурсів.
+### `users`
 
-Наприклад, роботодавець може редагувати або видаляти тільки власні вакансії, а кандидат — переглядати та скасовувати тільки власні заявки.
+Зберігає інформацію про користувачів та їхні ролі.
 
-## Application flow
+### `vacancies`
+
+Зберігає вакансії та інформацію про роботодавця, який їх створив.
+
+### `applications`
+
+Зберігає заявки кандидатів на вакансії, статуси та інформацію про прикріплені резюме.
+
+Зв'язки між таблицями використовуються для забезпечення цілісності даних та контролю доступу до ресурсів.
+
+---
+
+## Application Flow
 
 Процес подачі заявки:
 
 ```text
 Job Seeker
     │
-    │ POST /applications
+    │ selects vacancy
     ▼
-Application
+Vacancy Details
+    │
+    │ submit application
+    ▼
+POST /api/applications
     │
     ├── user_id
     ├── vacancy_id
     ├── status
     └── resume
+    │
+    ▼
+PostgreSQL
+    │
+    ▼
+Employer Applications
+    │
+    └── status update
 ```
 
-Перед створенням заявки backend перевіряє, чи не існує вже заявки цього користувача на цю вакансію.
+Перед створенням заявки backend перевіряє, чи не подав користувач заявку на цю вакансію раніше.
 
-Після подачі заявки роботодавець може переглянути її у власному розділі та змінити статус кандидата.
+Після подачі заявки роботодавець може переглянути кандидата та змінити статус заявки.
+
+---
 
 ## API
 
 Frontend взаємодіє з backend через REST API.
 
-Основні API endpoints:
+### Authentication
 
-```text
-Authentication
-POST   /api/auth/register
-POST   /api/auth/login
-POST   /api/auth/logout
-GET    /api/auth/me
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+```
 
-Vacancies
+### Vacancies
+
+```http
 GET    /api/vacancies
 GET    /api/vacancies/:id
 POST   /api/vacancies
 PUT    /api/vacancies/:id
 DELETE /api/vacancies/:id
+```
 
-Applications
+### Applications
+
+```http
 POST   /api/applications
 GET    /api/applications/my
 GET    /api/applications/employer
@@ -289,29 +336,26 @@ PATCH  /api/applications/:id/status
 GET    /api/applications/:id/resume
 ```
 
-API використовує authentication та role-based authorization для захисту приватних операцій.
+Приватні API-операції захищені authentication та role-based authorization.
+
+---
 
 ## Protected Routes
 
-Для захисту frontend-маршрутів використовується `ProtectedRoute`.
-
-Неавторизований користувач не може отримати доступ до сторінок, які потребують authentication.
-
-Додатково перевіряється роль користувача.
-
-Наприклад:
+Frontend використовує `ProtectedRoute` для обмеження доступу до приватних сторінок.
 
 ```text
 jobseeker
-    └── My Applications
+└── My Applications
 
 employer
-    ├── Create Vacancy
-    ├── Edit Vacancy
-    └── Employer Applications
+├── Create Vacancy
+└── Edit Vacancy
 ```
 
-Backend також перевіряє права доступу, тому frontend-обмежень недостатньо для виконання захищених операцій.
+Додатково backend перевіряє права користувача, тому захист не обмежується лише frontend.
+
+---
 
 ## Resume Upload
 
@@ -324,63 +368,84 @@ Backend також перевіряє права доступу, тому fronte
 * DOCX
 
 Файл передається на backend через `multipart/form-data`.
+<img width="1432" height="825" alt="image" src="https://github.com/user-attachments/assets/37ac2ee9-1740-4df4-ac0a-54ae2be64e46" />
 
-Роботодавець може отримати прикріплене резюме зі сторінки заявок.
+Роботодавець може отримати резюме кандидата зі сторінки заявок.
+
+<img width="1458" height="906" alt="image" src="https://github.com/user-attachments/assets/566142a2-e21d-49a2-8966-18e9c2839a4b" />
+
 
 ## Responsive Design
 
-Інтерфейс адаптований для різних розмірів екрана.
-
-Основна увага приділена:
+Інтерфейс адаптований для різних розмірів екрана:
 
 * desktop;
 * tablet;
 * mobile.
 
-UI побудований на Tailwind CSS із використанням responsive utilities.
+UI побудований з використанням Tailwind CSS та responsive utilities.
+
+---
 
 ## Installation
 
-Клонуйте репозиторій:
+### 1. Clone repository
 
 ```bash
 git clone https://github.com/ilusha12321/job-board.git
-```
-
-Перейдіть у папку проєкту:
-
-```bash
 cd job-board
 ```
 
-Встановіть frontend залежності:
+### 2. Install frontend dependencies
 
 ```bash
 npm install
 ```
 
-Перейдіть до backend:
+### 3. Install backend dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-Створіть файл `.env` у папці `backend` та додайте необхідні змінні середовища для PostgreSQL і JWT.
+### 4. Configure environment variables
 
-Після налаштування бази даних запустіть backend:
+Створіть файл:
+
+```text
+backend/.env
+```
+
+та додайте необхідні змінні середовища для PostgreSQL і JWT.
+
+### 5. Configure PostgreSQL
+
+Створіть базу даних PostgreSQL та виконайте SQL-скрипт:
+
+```text
+database/schema.sql
+```
+
+### 6. Start backend
+
+У папці `backend`:
 
 ```bash
 npm run dev
 ```
 
-В іншому терміналі запустіть frontend:
+### 7. Start frontend
+
+В іншому терміналі, з кореня проєкту:
 
 ```bash
 npm run dev
 ```
 
-Після запуску frontend відкрийте адресу, яку покаже Vite у терміналі.
+Після запуску відкрийте адресу, яку покаже Vite.
+
+---
 
 ## Available Scripts
 
@@ -424,6 +489,8 @@ npm run build
 
 Створення production build.
 
+---
+
 ## Project Goals
 
 Під час розробки проєкту я практикую:
@@ -449,18 +516,17 @@ npm run build
 * Git / GitHub;
 * структурування full-stack проєкту.
 
+---
+
 ## Future Improvements
 
-Подальший розвиток проєкту може включати:
-
-* покращену валідацію форм;
-* розширену обробку API-помилок;
 * pagination для вакансій;
 * сортування вакансій;
-* сторінку профілю користувача;
+* сторінка профілю користувача;
 * розширене керування профілем роботодавця;
 * email notifications;
 * password recovery;
 * deployment frontend та backend;
 * production database configuration.
+
 
