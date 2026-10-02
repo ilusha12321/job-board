@@ -6,12 +6,14 @@ import { getErrorMessage } from "../services/apiClient";
 import { type Vacancy } from "../types/vacancy";
 import VacancyForm from "../components/VacancyForm";
 import type { MyVacanciesStackParamList } from "../app/MyVacanciesStack";
+import { useTranslation } from "react-i18next";
 
 export default function CreateVacancyScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<MyVacanciesStackParamList>>();
+  const { t } = useTranslation();
 
   async function handleSubmit(data: Omit<Vacancy, "id" | "createdBy">) {
     setError(null);
@@ -20,7 +22,7 @@ export default function CreateVacancyScreen() {
       await createVacancy(data);
       navigation.goBack();
     } catch (e) {
-      setError(getErrorMessage(e, "Unable to create job"));
+      setError(getErrorMessage(e, t("vacancyForm.createFailed")));
     } finally {
       setIsSubmitting(false);
     }
@@ -29,7 +31,7 @@ export default function CreateVacancyScreen() {
   return (
     <VacancyForm
       onSubmit={handleSubmit}
-      submitLabel="Create"
+      submitLabel={t("vacancyForm.createTitle")}
       error={error}
       isSubmitting={isSubmitting}
     />

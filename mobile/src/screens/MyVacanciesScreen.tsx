@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,12 +9,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
 import { getMyVacancies, deleteVacancy } from "../services/vacancyApi";
 import type { MyVacancy } from "../types/vacancy";
 import type { MyVacanciesStackParamList } from "../app/MyVacanciesStack";
 import { getErrorMessage } from "../services/apiClient";
+import { getTypeLabelKey } from "../i18n/vacancyTypes";
 import AppHeader from "../components/AppHeader";
 
 type Status = "loading" | "error" | "ready";
@@ -25,6 +26,7 @@ export default function MyVacanciesScreen() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const navigation =
     useNavigation<NativeStackNavigationProp<MyVacanciesStackParamList>>();
+  const { t } = useTranslation();
 
   const loadData = useCallback(() => {
     getMyVacancies()
@@ -47,13 +49,16 @@ export default function MyVacanciesScreen() {
   function handleDelete(vacancy: MyVacancy) {
     const warning =
       vacancy.applicationsCount > 0
-        ? `Delete "${vacancy.title}"? ${vacancy.applicationsCount} application(s) will be deleted too.`
-        : `Delete "${vacancy.title}"?`;
+        ? t("myVacancies.deleteMessageWithApps", {
+            title: vacancy.title,
+            count: vacancy.applicationsCount,
+          })
+        : t("myVacancies.deleteMessage", { title: vacancy.title });
 
-    Alert.alert("Delete vacancy", warning, [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("myVacancies.deleteTitle"), warning, [
+      { text: t("myVacancies.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("myVacancies.delete"),
         style: "destructive",
         onPress: async () => {
           setDeletingId(vacancy.id);
@@ -64,8 +69,8 @@ export default function MyVacanciesScreen() {
             );
           } catch (e) {
             Alert.alert(
-              "Error",
-              getErrorMessage(e, "Unable to delete vacancy"),
+              t("myVacancies.error"),
+              getErrorMessage(e, t("myVacancies.deleteFailed")),
             );
           } finally {
             setDeletingId(null);
@@ -92,10 +97,10 @@ export default function MyVacanciesScreen() {
         <AppHeader />
         <View className="flex-1 items-center justify-center px-4">
           <Text className="text-base font-semibold text-text dark:text-white">
-            Failed to load vacancies
+            {t("myVacancies.failedToLoad")}
           </Text>
           <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-            Please try again later.
+            {t("myVacancies.tryAgain")}
           </Text>
         </View>
       </SafeAreaView>
@@ -113,27 +118,29 @@ export default function MyVacanciesScreen() {
           <View className="mb-2 flex-row items-center justify-between">
             <View>
               <Text className="text-2xl font-bold text-text dark:text-white">
-                My vacancies
+                {t("myVacancies.title")}
               </Text>
               <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-                Vacancies you have published.
+                {t("myVacancies.subtitle")}
               </Text>
             </View>
             <Pressable
               onPress={() => navigation.navigate("CreateVacancy")}
               className="rounded-md bg-primary px-3 py-2"
             >
-              <Text className="text-sm font-medium text-white">Create</Text>
+              <Text className="text-sm font-medium text-white">
+                {t("myVacancies.create")}
+              </Text>
             </Pressable>
           </View>
         }
         ListEmptyComponent={
           <View className="items-center border-t border-border py-10 dark:border-slate-700">
             <Text className="text-base font-semibold text-text dark:text-white">
-              No vacancies yet
+              {t("myVacancies.empty")}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              Create your first vacancy to start receiving applications.
+              {t("myVacancies.emptyHint")}
             </Text>
           </View>
         }
@@ -143,25 +150,24 @@ export default function MyVacanciesScreen() {
               {item.title}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              {item.location} · {item.type}
+              {item.location} · {t(getTypeLabelKey(item.type))}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              {item.salary ? item.salary : "Salary not specified"}
+              {item.salary ? item.salary : t("myVacancies.salaryNotSpecified")}
             </Text>
 
             <View className="mt-3 flex-row flex-wrap items-center gap-2">
               <View className="rounded-full bg-slate-100 px-2.5 py-0.5 dark:bg-slate-700">
                 <Text className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                  {item.applicationsCount}{" "}
-                  {item.applicationsCount === 1
-                    ? "application"
-                    : "applications"}
+                  {t("myVacancies.application", {
+                    count: item.applicationsCount,
+                  })}
                 </Text>
               </View>
               {item.newCount > 0 && (
                 <View className="rounded-full bg-blue-50 px-2.5 py-0.5 dark:bg-blue-950">
                   <Text className="text-xs font-medium text-primary dark:text-blue-400">
-                    {item.newCount} new
+                    {t("myVacancies.new", { count: item.newCount })}
                   </Text>
                 </View>
               )}
@@ -174,7 +180,7 @@ export default function MyVacanciesScreen() {
                 }
               >
                 <Text className="text-sm font-medium text-muted dark:text-slate-400">
-                  Edit
+                  {t("myVacancies.edit")}
                 </Text>
               </Pressable>
               <Pressable
@@ -182,7 +188,9 @@ export default function MyVacanciesScreen() {
                 disabled={deletingId === item.id}
               >
                 <Text className="text-sm font-medium text-danger">
-                  {deletingId === item.id ? "Deleting..." : "Delete"}
+                  {deletingId === item.id
+                    ? t("myVacancies.deleting")
+                    : t("myVacancies.delete")}
                 </Text>
               </Pressable>
             </View>

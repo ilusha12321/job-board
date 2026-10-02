@@ -9,6 +9,7 @@ import { getVacancyById, updateVacancy } from "../services/vacancyApi";
 import { getErrorMessage } from "../services/apiClient";
 import { type Vacancy } from "../types/vacancy";
 import VacancyForm from "../components/VacancyForm";
+import { useTranslation } from "react-i18next";
 
 type EditVacancyRouteParams = { EditVacancy: { id: string } };
 
@@ -22,6 +23,7 @@ export default function EditVacancyScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
   useEffect(() => {
     let cancelled = false;
 
@@ -49,7 +51,7 @@ export default function EditVacancyScreen() {
       await updateVacancy(id, updated);
       navigation.goBack();
     } catch (e) {
-      setError(getErrorMessage(e, "Unable to update job"));
+      setError(getErrorMessage(e, t("vacancyForm.updateFailed")));
     } finally {
       setIsSubmitting(false);
     }
@@ -57,7 +59,7 @@ export default function EditVacancyScreen() {
 
   if (status === "loading") {
     return (
-      <View className="flex-1 items-center justify-center bg-bg">
+      <View className="flex-1 items-center justify-center bg-bg dark:bg-slate-950">
         <ActivityIndicator />
       </View>
     );
@@ -65,8 +67,10 @@ export default function EditVacancyScreen() {
 
   if (status === "error" || !data) {
     return (
-      <View className="flex-1 items-center justify-center bg-bg">
-        <Text className="text-muted">Failed to load vacancy.</Text>
+      <View className="flex-1 items-center justify-center bg-bg dark:bg-slate-950">
+        <Text className="text-muted dark:text-slate-400">
+          {t("vacancyForm.failedToLoad")}
+        </Text>
       </View>
     );
   }
@@ -74,7 +78,7 @@ export default function EditVacancyScreen() {
   return (
     <VacancyForm
       onSubmit={handleSubmit}
-      submitLabel="Update"
+      submitLabel={t("vacancyForm.editTitle")}
       error={error}
       isSubmitting={isSubmitting}
       initialData={data}

@@ -24,6 +24,8 @@ import { type Vacancy } from "../types/vacancy";
 import { useAuth } from "../app/AuthContext";
 import { getErrorMessage } from "../services/apiClient";
 import * as DocumentPicker from "expo-document-picker";
+import { useTranslation } from "react-i18next";
+import { getTypeLabelKey } from "../i18n/vacancyTypes";
 
 type VacancyDetailsRouteParams = { VacancyDetails: { id: string } };
 
@@ -31,6 +33,7 @@ export default function VacancyDetailsScreen() {
   const route =
     useRoute<RouteProp<VacancyDetailsRouteParams, "VacancyDetails">>();
   const { id } = route.params;
+  const { t } = useTranslation();
   const navigation =
     useNavigation<NativeStackNavigationProp<{ EditVacancy: { id: string } }>>();
   const { user } = useAuth();
@@ -83,7 +86,7 @@ export default function VacancyDetailsScreen() {
 
     const file = result.assets[0];
     if (file.size && file.size > 5 * 1024 * 1024) {
-      setError("File must be under 5MB");
+      setError(t("vacancyDetails.fileTooLarge"));
       return;
     }
 
@@ -98,12 +101,12 @@ export default function VacancyDetailsScreen() {
   function handleDelete() {
     if (!vacancy) return;
     Alert.alert(
-      "Delete vacancy",
-      "Delete this vacancy? All applications to it will be deleted too.",
+      t("vacancyDetails.deleteTitle"),
+      t("vacancyDetails.deleteMessage"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("vacancyDetails.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("vacancyDetails.delete"),
           style: "destructive",
           onPress: async () => {
             setIsDeleting(true);
@@ -112,14 +115,12 @@ export default function VacancyDetailsScreen() {
               navigation.goBack();
             } catch (e) {
               setError(getErrorMessage(e, "Unable to delete job"));
-              setIsDeleting(false);
             }
           },
         },
       ],
     );
   }
-
   async function handleApplyToggle() {
     if (isApplying) return;
     setError(null);
@@ -152,12 +153,11 @@ export default function VacancyDetailsScreen() {
     return (
       <View className="flex-1 items-center justify-center bg-bg dark:bg-slate-950">
         <Text className="text-muted dark:text-slate-400">
-          Vacancy not found.
+          {t("vacancyDetails.notFound")}
         </Text>
       </View>
     );
   }
-
   return (
     <ScrollView
       className="flex-1 bg-bg dark:bg-slate-950"
@@ -171,12 +171,11 @@ export default function VacancyDetailsScreen() {
           {vacancy.company.name}
         </Text>
         <Text className="text-xl font-semibold text-text dark:text-white">
-          {vacancy.salary ? vacancy.salary : "Salary is hidden"}
+          {vacancy.salary ? vacancy.salary : t("vacancies.salaryHidden")}
         </Text>
         <Text className="text-sm text-muted dark:text-slate-400">
-          {vacancy.location} · {vacancy.type}
+          {vacancy.location} · {t(getTypeLabelKey(vacancy.type))}
         </Text>
-
         {error && <Text className="text-sm text-danger">{error}</Text>}
 
         {user?.role === "jobseeker" && (
@@ -188,7 +187,9 @@ export default function VacancyDetailsScreen() {
                   className="items-start rounded-lg border border-border bg-surface px-4 py-2.5 dark:border-slate-700 dark:bg-slate-800"
                 >
                   <Text className="text-sm font-medium text-text dark:text-white">
-                    {resumeFile ? "Change file" : "Attach resume (optional)"}
+                    {resumeFile
+                      ? t("vacancyDetails.changeFile")
+                      : t("vacancyDetails.attachResume")}
                   </Text>
                 </Pressable>
                 {resumeFile && (
@@ -208,10 +209,10 @@ export default function VacancyDetailsScreen() {
             >
               <Text className="text-sm font-medium text-white">
                 {isApplying
-                  ? "Please wait..."
+                  ? t("vacancyDetails.pleaseWait")
                   : applied
-                    ? "Cancel application"
-                    : "Apply"}
+                    ? t("vacancyDetails.cancelApplication")
+                    : t("vacancyDetails.apply")}
               </Text>
             </Pressable>
           </View>
@@ -224,7 +225,7 @@ export default function VacancyDetailsScreen() {
               className="rounded-lg border border-border bg-surface px-4 py-2 dark:border-slate-700 dark:bg-slate-800"
             >
               <Text className="text-sm font-medium text-text dark:text-white">
-                Edit
+                {t("vacancyDetails.edit")}
               </Text>
             </Pressable>
             <Pressable
@@ -233,7 +234,9 @@ export default function VacancyDetailsScreen() {
               className="rounded-lg bg-danger px-4 py-2 disabled:opacity-60"
             >
               <Text className="text-sm font-medium text-white">
-                {isDeleting ? "Deleting..." : "Delete"}
+                {isDeleting
+                  ? t("vacancyDetails.deleting")
+                  : t("vacancyDetails.delete")}
               </Text>
             </Pressable>
           </View>
@@ -242,23 +245,23 @@ export default function VacancyDetailsScreen() {
 
       <View className="gap-3 border-t border-border pt-6 dark:border-slate-700">
         <Text className="text-lg font-semibold text-text dark:text-white">
-          About the vacancy
+          {t("vacancyDetails.aboutVacancy")}
         </Text>
         <Text className="text-base leading-relaxed text-text dark:text-slate-300">
           {vacancy.description
             ? vacancy.description
-            : "There is no description."}
+            : t("vacancyDetails.noDescription")}
         </Text>
       </View>
 
       <View className="gap-3 border-t border-border pt-6 dark:border-slate-700">
         <Text className="text-lg font-semibold text-text dark:text-white">
-          About the company
+          {t("vacancyDetails.aboutCompany")}
         </Text>
         <Text className="text-base leading-relaxed text-text dark:text-slate-300">
           {vacancy.company.description
             ? vacancy.company.description
-            : "There is no description."}
+            : t("vacancyDetails.noDescription")}
         </Text>
         <View className="gap-1">
           {vacancy.company.contactEmail ? (

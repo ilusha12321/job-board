@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +18,7 @@ import { ApiError } from "../services/apiClient";
 import { useAuth } from "../app/AuthContext";
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -53,16 +55,16 @@ export default function LoginScreen() {
         >
           <View className="mx-4 rounded-xl border border-border bg-surface p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <Text className="text-2xl font-bold text-text dark:text-white">
-              Login
+              {t("login.title")}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              Sign in to your hardwork account
+              {t("login.subtitle")}
             </Text>
 
             <View className="mt-6 gap-4">
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Username
+                  {t("login.username")}
                 </Text>
                 <TextInput
                   value={username}
@@ -75,7 +77,7 @@ export default function LoginScreen() {
 
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Password
+                  {t("login.password")}
                 </Text>
                 <TextInput
                   value={password}
@@ -94,18 +96,18 @@ export default function LoginScreen() {
                 className="items-center rounded-lg bg-primary px-4 py-2.5 active:bg-primary-hover disabled:opacity-60"
               >
                 <Text className="text-sm font-medium text-white">
-                  {isSubmitting ? "Logging in..." : "Login"}
+                  {isSubmitting ? t("login.submitting") : t("login.submit")}
                 </Text>
               </Pressable>
             </View>
 
             <View className="mt-6 flex-row justify-center gap-1">
               <Text className="text-sm text-muted dark:text-slate-400">
-                Don't have an account?
+                {t("login.noAccount")}
               </Text>
               <Pressable onPress={() => navigation.navigate("Register")}>
                 <Text className="text-sm font-medium text-primary dark:text-blue-400">
-                  Register
+                  {t("login.register")}
                 </Text>
               </Pressable>
             </View>

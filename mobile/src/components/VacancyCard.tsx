@@ -1,5 +1,7 @@
 import { View, Text, Pressable } from "react-native";
+import { useTranslation } from "react-i18next";
 import { type Vacancy } from "../types/vacancy";
+import { getTypeLabelKey } from "../i18n/vacancyTypes";
 
 type Props = {
   vacancy: Vacancy;
@@ -7,6 +9,8 @@ type Props = {
 };
 
 export default function VacancyCard({ vacancy, onPress }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Pressable
       onPress={onPress}
@@ -25,13 +29,13 @@ export default function VacancyCard({ vacancy, onPress }: Props) {
         </Text>
         <View className="rounded-full bg-blue-50 px-2.5 py-0.5 dark:bg-blue-950">
           <Text className="text-xs font-medium text-primary dark:text-blue-400">
-            {vacancy.type}
+            {t(getTypeLabelKey(vacancy.type))}
           </Text>
         </View>
       </View>
 
       <Text className="mt-3 text-sm font-medium text-success dark:text-green-400">
-        {vacancy.salary ? vacancy.salary : "Salary is hidden"}
+        {vacancy.salary ? vacancy.salary : t("vacancies.salaryHidden")}
       </Text>
     </Pressable>
   );

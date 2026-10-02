@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +18,7 @@ import { ApiError } from "../services/apiClient";
 import { useAuth } from "../app/AuthContext";
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +39,7 @@ export default function RegisterScreen() {
     } catch (e) {
       setError(
         e instanceof ApiError && e.status === 409
-          ? "A user with this username/email already exists"
+          ? t("register.userExists")
           : e instanceof ApiError
             ? e.message
             : "Something went wrong",
@@ -61,16 +63,16 @@ export default function RegisterScreen() {
         >
           <View className="mx-4 rounded-xl border border-border bg-surface p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <Text className="text-2xl font-bold text-text dark:text-white">
-              Register
+              {t("register.title")}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              Create your hardwork account
+              {t("register.subtitle")}
             </Text>
 
             <View className="mt-6 gap-4">
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Role
+                  {t("register.role")}
                 </Text>
                 <View className="flex-row gap-2">
                   <Pressable
@@ -88,7 +90,7 @@ export default function RegisterScreen() {
                           : "text-text dark:text-white"
                       }
                     >
-                      Job Seeker
+                      {t("register.jobseeker")}
                     </Text>
                   </Pressable>
                   <Pressable
@@ -106,7 +108,7 @@ export default function RegisterScreen() {
                           : "text-text dark:text-white"
                       }
                     >
-                      Employer
+                      {t("register.employer")}
                     </Text>
                   </Pressable>
                 </View>
@@ -114,7 +116,7 @@ export default function RegisterScreen() {
 
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Username
+                  {t("register.username")}
                 </Text>
                 <TextInput
                   value={username}
@@ -127,7 +129,7 @@ export default function RegisterScreen() {
 
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Email
+                  {t("register.email")}
                 </Text>
                 <TextInput
                   value={email}
@@ -141,7 +143,7 @@ export default function RegisterScreen() {
 
               <View className="gap-1.5">
                 <Text className="text-sm font-medium text-text dark:text-white">
-                  Password
+                  {t("register.password")}
                 </Text>
                 <TextInput
                   value={password}
@@ -160,18 +162,20 @@ export default function RegisterScreen() {
                 className="items-center rounded-lg bg-primary px-4 py-2.5 active:bg-primary-hover disabled:opacity-60"
               >
                 <Text className="text-sm font-medium text-white">
-                  {isSubmitting ? "Registering..." : "Register"}
+                  {isSubmitting
+                    ? t("register.submitting")
+                    : t("register.submit")}
                 </Text>
               </Pressable>
             </View>
 
             <View className="mt-6 flex-row justify-center gap-1">
               <Text className="text-sm text-muted dark:text-slate-400">
-                Already have an account?
+                {t("register.hasAccount")}
               </Text>
               <Pressable onPress={() => navigation.navigate("Login")}>
                 <Text className="text-sm font-medium text-primary dark:text-blue-400">
-                  Login
+                  {t("register.login")}
                 </Text>
               </Pressable>
             </View>

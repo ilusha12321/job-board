@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
 import MyApplicationsScreen from "../screens/MyApplicationsScreen";
 import VacancyDetailsScreen from "../screens/VacancyDetailsScreen";
 import type { VacanciesStackParamList } from "./VacanciesStack";
@@ -13,6 +14,7 @@ const Stack = createNativeStackNavigator<MyApplicationsStackParamList>();
 
 export default function MyApplicationsStack() {
   const { isDark } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Stack.Navigator
@@ -29,7 +31,7 @@ export default function MyApplicationsStack() {
       <Stack.Screen
         name="VacancyDetails"
         component={VacancyDetailsScreen}
-        options={{ title: "Vacancy" }}
+        options={{ title: t("navHeaders.vacancy") }}
       />
     </Stack.Navigator>
   );

@@ -8,15 +8,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useTranslation } from "react-i18next";
+import { VACANCY_TYPES, TYPE_LABEL_KEYS } from "../i18n/vacancyTypes";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { type Vacancy } from "../types/vacancy";
-
-const VACANCY_TYPES = [
-  "Full-Time",
-  "Part-Time",
-  "Contract",
-  "Internship",
-] as const;
 
 type VacancyFormProps = {
   onSubmit: (data: Omit<Vacancy, "id" | "createdBy">) => void;
@@ -56,7 +51,7 @@ export default function VacancyForm({
   );
 
   const headerHeight = useHeaderHeight();
-
+  const { t } = useTranslation();
   function handleSubmit() {
     onSubmit({
       title,
@@ -89,11 +84,11 @@ export default function VacancyForm({
       >
         <View className="gap-4">
           <Text className="text-lg font-semibold text-text dark:text-white">
-            Vacancy details
+            {t("vacancyForm.sectionDetails")}
           </Text>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Title</Text>
+            <Text className={labelClass}>{t("vacancyForm.titleLabel")}</Text>
             <TextInput
               value={title}
               onChangeText={setTitle}
@@ -102,26 +97,26 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Type</Text>
+            <Text className={labelClass}>{t("vacancyForm.typeLabel")}</Text>
             <View className="flex-row flex-wrap gap-2">
-              {VACANCY_TYPES.map((t) => (
+              {VACANCY_TYPES.map((vacType) => (
                 <Pressable
-                  key={t}
-                  onPress={() => setType(t)}
+                  key={vacType}
+                  onPress={() => setType(vacType)}
                   className={`rounded-lg border px-3 py-2 ${
-                    type === t
+                    type === vacType
                       ? "border-primary bg-blue-50 dark:border-blue-400 dark:bg-blue-950"
                       : "border-border dark:border-slate-700"
                   }`}
                 >
                   <Text
                     className={
-                      type === t
+                      type === vacType
                         ? "font-medium text-primary dark:text-blue-400"
                         : "text-text dark:text-white"
                     }
                   >
-                    {t}
+                    {t(TYPE_LABEL_KEYS[vacType])}
                   </Text>
                 </Pressable>
               ))}
@@ -129,7 +124,7 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Location</Text>
+            <Text className={labelClass}>{t("vacancyForm.locationLabel")}</Text>
             <TextInput
               value={location}
               onChangeText={setLocation}
@@ -138,17 +133,20 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Salary</Text>
+            <Text className={labelClass}>{t("vacancyForm.salaryLabel")}</Text>
             <TextInput
               value={salary}
               onChangeText={setSalary}
-              placeholder="e.g. $1200–1600"
+              placeholder={t("vacancyForm.salaryPlaceholder")}
+              placeholderTextColor="#94a3b8"
               className={inputClass}
             />
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Description</Text>
+            <Text className={labelClass}>
+              {t("vacancyForm.descriptionLabel")}
+            </Text>
             <TextInput
               value={description}
               onChangeText={setDescription}
@@ -162,11 +160,13 @@ export default function VacancyForm({
 
         <View className="gap-4 border-t border-border pt-6 dark:border-slate-700">
           <Text className="text-lg font-semibold text-text dark:text-white">
-            Company information
+            {t("vacancyForm.sectionCompany")}
           </Text>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Company name</Text>
+            <Text className={labelClass}>
+              {t("vacancyForm.companyNameLabel")}
+            </Text>
             <TextInput
               value={companyName}
               onChangeText={setCompanyName}
@@ -175,7 +175,9 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Company description</Text>
+            <Text className={labelClass}>
+              {t("vacancyForm.companyDescriptionLabel")}
+            </Text>
             <TextInput
               value={companyDescription}
               onChangeText={setCompanyDescription}
@@ -187,7 +189,9 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Contact email</Text>
+            <Text className={labelClass}>
+              {t("vacancyForm.companyEmailLabel")}
+            </Text>
             <TextInput
               value={companyEmail}
               onChangeText={setCompanyEmail}
@@ -198,7 +202,9 @@ export default function VacancyForm({
           </View>
 
           <View className="gap-1.5">
-            <Text className={labelClass}>Contact phone</Text>
+            <Text className={labelClass}>
+              {t("vacancyForm.companyPhoneLabel")}
+            </Text>
             <TextInput
               value={companyPhone}
               onChangeText={setCompanyPhone}

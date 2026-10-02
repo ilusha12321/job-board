@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useTranslation } from "react-i18next";
 import VacanciesStack from "./VacanciesStack";
 import MyApplicationsStack from "./MyApplicationsStack";
 import MyVacanciesStack from "./MyVacanciesStack";
@@ -18,6 +19,7 @@ const Tab = createBottomTabNavigator<MainStackParamList>();
 export default function MainNavigator() {
   const { user } = useAuth();
   const { isDark } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
@@ -31,13 +33,13 @@ export default function MainNavigator() {
       <Tab.Screen
         name="VacanciesTab"
         component={VacanciesStack}
-        options={{ title: "Vacancies" }}
+        options={{ title: t("vacancies.title") }}
       />
       {user?.role === "jobseeker" && (
         <Tab.Screen
           name="MyApplicationsTab"
           component={MyApplicationsStack}
-          options={{ title: "My applications" }}
+          options={{ title: t("myApplications.title") }}
         />
       )}
       {user?.role === "employer" && (
@@ -45,12 +47,12 @@ export default function MainNavigator() {
           <Tab.Screen
             name="MyVacanciesTab"
             component={MyVacanciesStack}
-            options={{ title: "My vacancies" }}
+            options={{ title: t("myVacancies.title") }}
           />
           <Tab.Screen
             name="EmployerApplicationsTab"
             component={EmployerApplicationsStack}
-            options={{ title: "Applications" }}
+            options={{ title: t("employerApplications.title") }}
           />
         </>
       )}

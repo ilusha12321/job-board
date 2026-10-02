@@ -3,6 +3,7 @@ import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useTranslation } from "react-i18next";
 import { getVacancies } from "../services/vacancyApi";
 import { getMyApplications } from "../services/applicationApi";
 import type { Vacancy } from "../types/vacancy";
@@ -19,20 +20,20 @@ type Item = {
 
 const STATUS_STYLES: Record<
   Application["status"],
-  { label: string; bg: string; text: string }
+  { labelKey: string; bg: string; text: string }
 > = {
   delivered: {
-    label: "Delivered",
+    labelKey: "myApplications.statusDelivered",
     bg: "bg-slate-100 dark:bg-slate-800",
     text: "text-slate-700 dark:text-slate-300",
   },
   reviewed: {
-    label: "Reviewed",
+    labelKey: "myApplications.statusReviewed",
     bg: "bg-amber-50 dark:bg-amber-950",
     text: "text-amber-700 dark:text-amber-400",
   },
   "invite for interview": {
-    label: "Interview invitation",
+    labelKey: "myApplications.statusInterview",
     bg: "bg-green-50 dark:bg-green-950",
     text: "text-green-700 dark:text-green-400",
   },
@@ -43,6 +44,7 @@ export default function MyApplicationsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const navigation =
     useNavigation<NativeStackNavigationProp<MyApplicationsStackParamList>>();
+  const { t, i18n } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -102,20 +104,20 @@ export default function MyApplicationsScreen() {
         ListHeaderComponent={
           <View className="mb-2">
             <Text className="text-2xl font-bold text-text dark:text-white">
-              My applications
+              {t("myApplications.title")}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              Vacancies you have applied to.
+              {t("myApplications.subtitle")}
             </Text>
           </View>
         }
         ListEmptyComponent={
           <View className="items-center border-t border-border py-10 dark:border-slate-700">
             <Text className="text-base font-semibold text-text dark:text-white">
-              No applications yet
+              {t("myApplications.empty")}
             </Text>
             <Text className="mt-1 text-sm text-muted dark:text-slate-400">
-              Find a vacancy that interests you and submit your application.
+              {t("myApplications.emptyHint")}
             </Text>
           </View>
         }
@@ -134,11 +136,15 @@ export default function MyApplicationsScreen() {
                 <Text
                   className={`text-xs font-medium ${STATUS_STYLES[item.status].text}`}
                 >
-                  {STATUS_STYLES[item.status].label}
+                  {t(STATUS_STYLES[item.status].labelKey)}
                 </Text>
               </View>
               <Text className="text-sm text-muted dark:text-slate-400">
-                Applied {new Date(item.appliedAt).toLocaleDateString("en-GB")}
+                {t("myApplications.appliedOn", {
+                  date: new Date(item.appliedAt).toLocaleDateString(
+                    i18n.language === "uk" ? "uk-UA" : "en-GB",
+                  ),
+                })}
               </Text>
             </View>
           </View>
