@@ -13,7 +13,7 @@
 ## Web
 
 ### Головна сторінка
-`<img width="1460" height="872" alt="image" src="https://github.com/user-attachments/assets/360ab7eb-69d3-4728-a660-f33d2f63b356" />`
+<img width="1460" height="872" alt="image" src="https://github.com/user-attachments/assets/360ab7eb-69d3-4728-a660-f33d2f63b356" />
 
 ### Список вакансій
 `<img width="1477" height="896" alt="image" src="https://github.com/user-attachments/assets/5b630393-121a-407c-bd16-ef691449107d" />`
