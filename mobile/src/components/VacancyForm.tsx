@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { type Vacancy } from "../types/vacancy";
 
 const VACANCY_TYPES = [
@@ -54,6 +55,8 @@ export default function VacancyForm({
     initialData?.company.contactPhone ?? "",
   );
 
+  const headerHeight = useHeaderHeight();
+
   function handleSubmit() {
     onSubmit({
       title,
@@ -71,21 +74,21 @@ export default function VacancyForm({
   }
 
   const inputClass =
-    "rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text";
-  const labelClass = "text-sm font-medium text-text";
-
+    "rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text dark:border-slate-700 dark:bg-slate-800 dark:text-white";
+  const labelClass = "text-sm font-medium text-text dark:text-white";
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1"
+      keyboardVerticalOffset={headerHeight}
+      className="flex-1 bg-bg dark:bg-slate-950"
     >
       <ScrollView
-        className="flex-1 bg-bg"
+        className="flex-1 bg-bg dark:bg-slate-950"
         contentContainerStyle={{ padding: 16, gap: 20 }}
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-4">
-          <Text className="text-lg font-semibold text-text">
+          <Text className="text-lg font-semibold text-text dark:text-white">
             Vacancy details
           </Text>
 
@@ -106,12 +109,16 @@ export default function VacancyForm({
                   key={t}
                   onPress={() => setType(t)}
                   className={`rounded-lg border px-3 py-2 ${
-                    type === t ? "border-primary bg-blue-50" : "border-border"
+                    type === t
+                      ? "border-primary bg-blue-50 dark:border-blue-400 dark:bg-blue-950"
+                      : "border-border dark:border-slate-700"
                   }`}
                 >
                   <Text
                     className={
-                      type === t ? "font-medium text-primary" : "text-text"
+                      type === t
+                        ? "font-medium text-primary dark:text-blue-400"
+                        : "text-text dark:text-white"
                     }
                   >
                     {t}
@@ -153,8 +160,8 @@ export default function VacancyForm({
           </View>
         </View>
 
-        <View className="gap-4 border-t border-border pt-6">
-          <Text className="text-lg font-semibold text-text">
+        <View className="gap-4 border-t border-border pt-6 dark:border-slate-700">
+          <Text className="text-lg font-semibold text-text dark:text-white">
             Company information
           </Text>
 

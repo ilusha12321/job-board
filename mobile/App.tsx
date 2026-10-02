@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
 import { AuthProvider, useAuth } from "./src/app/AuthContext";
+import { ThemeProvider } from "./src/app/ThemeContext";
 import AuthNavigator from "./src/app/AuthNavigator";
 import MainNavigator from "./src/app/MainNavigator";
 
@@ -32,10 +33,12 @@ function RootNavigator() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -5,30 +5,40 @@ import {
   ScrollView,
   ActivityIndicator,
   Pressable,
+  Alert,
 } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { getVacancyById } from "../services/vacancyApi";
+import {
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { getVacancyById, deleteVacancy } from "../services/vacancyApi";
 import {
   hasApplied,
   applyToVacancy,
   cancelApplication,
+  type ResumeFile,
 } from "../services/applicationApi";
-import * as DocumentPicker from "expo-document-picker";
-import { type ResumeFile } from "../services/applicationApi";
 import { type Vacancy } from "../types/vacancy";
-import type { VacanciesStackParamList } from "../app/VacanciesStack";
 import { useAuth } from "../app/AuthContext";
 import { getErrorMessage } from "../services/apiClient";
+import * as DocumentPicker from "expo-document-picker";
 
-type Props = NativeStackScreenProps<VacanciesStackParamList, "VacancyDetails">;
+type VacancyDetailsRouteParams = { VacancyDetails: { id: string } };
 
-export default function VacancyDetailsScreen({ route }: Props) {
+export default function VacancyDetailsScreen() {
+  const route =
+    useRoute<RouteProp<VacancyDetailsRouteParams, "VacancyDetails">>();
   const { id } = route.params;
+  const navigation =
+    useNavigation<NativeStackNavigationProp<{ EditVacancy: { id: string } }>>();
   const { user } = useAuth();
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [applied, setApplied] = useState<boolean | null>(null);
   const [isApplying, setIsApplying] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resumeFile, setResumeFile] = useState<ResumeFile | null>(null);
 
@@ -85,6 +95,31 @@ export default function VacancyDetailsScreen({ route }: Props) {
     });
   }
 
+  function handleDelete() {
+    if (!vacancy) return;
+    Alert.alert(
+      "Delete vacancy",
+      "Delete this vacancy? All applications to it will be deleted too.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setIsDeleting(true);
+            try {
+              await deleteVacancy(id);
+              navigation.goBack();
+            } catch (e) {
+              setError(getErrorMessage(e, "Unable to delete job"));
+              setIsDeleting(false);
+            }
+          },
+        },
+      ],
+    );
+  }
+
   async function handleApplyToggle() {
     if (isApplying) return;
     setError(null);
@@ -104,9 +139,10 @@ export default function VacancyDetailsScreen({ route }: Props) {
       setIsApplying(false);
     }
   }
+
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-bg">
+      <View className="flex-1 items-center justify-center bg-bg dark:bg-slate-950">
         <ActivityIndicator />
       </View>
     );
@@ -114,24 +150,30 @@ export default function VacancyDetailsScreen({ route }: Props) {
 
   if (!vacancy) {
     return (
-      <View className="flex-1 items-center justify-center bg-bg">
-        <Text className="text-muted">Vacancy not found.</Text>
+      <View className="flex-1 items-center justify-center bg-bg dark:bg-slate-950">
+        <Text className="text-muted dark:text-slate-400">
+          Vacancy not found.
+        </Text>
       </View>
     );
   }
 
   return (
     <ScrollView
-      className="flex-1 bg-bg"
+      className="flex-1 bg-bg dark:bg-slate-950"
       contentContainerStyle={{ padding: 16, gap: 24 }}
     >
       <View className="gap-2">
-        <Text className="text-2xl font-bold text-text">{vacancy.title}</Text>
-        <Text className="text-lg text-text">{vacancy.company.name}</Text>
-        <Text className="text-xl font-semibold text-text">
+        <Text className="text-2xl font-bold text-text dark:text-white">
+          {vacancy.title}
+        </Text>
+        <Text className="text-lg text-text dark:text-white">
+          {vacancy.company.name}
+        </Text>
+        <Text className="text-xl font-semibold text-text dark:text-white">
           {vacancy.salary ? vacancy.salary : "Salary is hidden"}
         </Text>
-        <Text className="text-sm text-muted">
+        <Text className="text-sm text-muted dark:text-slate-400">
           {vacancy.location} · {vacancy.type}
         </Text>
 
@@ -143,14 +185,16 @@ export default function VacancyDetailsScreen({ route }: Props) {
               <View className="gap-1.5">
                 <Pressable
                   onPress={handlePickResume}
-                  className="items-start rounded-lg border border-border bg-surface px-4 py-2.5"
+                  className="items-start rounded-lg border border-border bg-surface px-4 py-2.5 dark:border-slate-700 dark:bg-slate-800"
                 >
-                  <Text className="text-sm font-medium text-text">
+                  <Text className="text-sm font-medium text-text dark:text-white">
                     {resumeFile ? "Change file" : "Attach resume (optional)"}
                   </Text>
                 </Pressable>
                 {resumeFile && (
-                  <Text className="text-sm text-muted">{resumeFile.name}</Text>
+                  <Text className="text-sm text-muted dark:text-slate-400">
+                    {resumeFile.name}
+                  </Text>
                 )}
               </View>
             )}
@@ -172,36 +216,58 @@ export default function VacancyDetailsScreen({ route }: Props) {
             </Pressable>
           </View>
         )}
+
+        {user?.role === "employer" && user.id === vacancy.createdBy && (
+          <View className="mt-2 flex-row gap-3">
+            <Pressable
+              onPress={() => navigation.navigate("EditVacancy", { id })}
+              className="rounded-lg border border-border bg-surface px-4 py-2 dark:border-slate-700 dark:bg-slate-800"
+            >
+              <Text className="text-sm font-medium text-text dark:text-white">
+                Edit
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={handleDelete}
+              disabled={isDeleting}
+              className="rounded-lg bg-danger px-4 py-2 disabled:opacity-60"
+            >
+              <Text className="text-sm font-medium text-white">
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
-      <View className="gap-3 border-t border-border pt-6">
-        <Text className="text-lg font-semibold text-text">
+      <View className="gap-3 border-t border-border pt-6 dark:border-slate-700">
+        <Text className="text-lg font-semibold text-text dark:text-white">
           About the vacancy
         </Text>
-        <Text className="text-base leading-relaxed text-text">
+        <Text className="text-base leading-relaxed text-text dark:text-slate-300">
           {vacancy.description
             ? vacancy.description
             : "There is no description."}
         </Text>
       </View>
 
-      <View className="gap-3 border-t border-border pt-6">
-        <Text className="text-lg font-semibold text-text">
+      <View className="gap-3 border-t border-border pt-6 dark:border-slate-700">
+        <Text className="text-lg font-semibold text-text dark:text-white">
           About the company
         </Text>
-        <Text className="text-base leading-relaxed text-text">
+        <Text className="text-base leading-relaxed text-text dark:text-slate-300">
           {vacancy.company.description
             ? vacancy.company.description
             : "There is no description."}
         </Text>
         <View className="gap-1">
           {vacancy.company.contactEmail ? (
-            <Text className="text-sm text-muted">
+            <Text className="text-sm text-muted dark:text-slate-400">
               {vacancy.company.contactEmail}
             </Text>
           ) : null}
           {vacancy.company.contactPhone ? (
-            <Text className="text-sm text-muted">
+            <Text className="text-sm text-muted dark:text-slate-400">
               {vacancy.company.contactPhone}
             </Text>
           ) : null}

@@ -8,13 +8,13 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import { registerUser } from "../services/authApi";
-import { ApiError } from "../services/apiClient";
-import { useAuth } from "../app/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../app/AuthNavigator";
+import { registerUser } from "../services/authApi";
+import { ApiError } from "../services/apiClient";
+import { useAuth } from "../app/AuthContext";
 
 export default function RegisterScreen() {
   const [username, setUsername] = useState("");
@@ -48,7 +48,10 @@ export default function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-bg" edges={["top", "bottom"]}>
+    <SafeAreaView
+      className="flex-1 bg-bg dark:bg-slate-950"
+      edges={["top", "bottom"]}
+    >
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -56,29 +59,33 @@ export default function RegisterScreen() {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         >
-          <View className="mx-4 rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <Text className="text-2xl font-bold text-text">Register</Text>
-            <Text className="mt-1 text-sm text-muted">
+          <View className="mx-4 rounded-xl border border-border bg-surface p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+            <Text className="text-2xl font-bold text-text dark:text-white">
+              Register
+            </Text>
+            <Text className="mt-1 text-sm text-muted dark:text-slate-400">
               Create your hardwork account
             </Text>
 
             <View className="mt-6 gap-4">
               <View className="gap-1.5">
-                <Text className="text-sm font-medium text-text">Role</Text>
+                <Text className="text-sm font-medium text-text dark:text-white">
+                  Role
+                </Text>
                 <View className="flex-row gap-2">
                   <Pressable
                     onPress={() => setRole("jobseeker")}
                     className={`flex-1 items-center rounded-lg border px-3 py-2.5 ${
                       role === "jobseeker"
-                        ? "border-primary bg-blue-50"
-                        : "border-border"
+                        ? "border-primary bg-blue-50 dark:border-blue-400 dark:bg-blue-950"
+                        : "border-border dark:border-slate-700"
                     }`}
                   >
                     <Text
                       className={
                         role === "jobseeker"
-                          ? "text-primary font-medium"
-                          : "text-text"
+                          ? "font-medium text-primary dark:text-blue-400"
+                          : "text-text dark:text-white"
                       }
                     >
                       Job Seeker
@@ -88,15 +95,15 @@ export default function RegisterScreen() {
                     onPress={() => setRole("employer")}
                     className={`flex-1 items-center rounded-lg border px-3 py-2.5 ${
                       role === "employer"
-                        ? "border-primary bg-blue-50"
-                        : "border-border"
+                        ? "border-primary bg-blue-50 dark:border-blue-400 dark:bg-blue-950"
+                        : "border-border dark:border-slate-700"
                     }`}
                   >
                     <Text
                       className={
                         role === "employer"
-                          ? "text-primary font-medium"
-                          : "text-text"
+                          ? "font-medium text-primary dark:text-blue-400"
+                          : "text-text dark:text-white"
                       }
                     >
                       Employer
@@ -105,45 +112,43 @@ export default function RegisterScreen() {
                 </View>
               </View>
 
-              <View className="mt-1 flex-row justify-center gap-1">
-                <Text className="text-sm text-muted">
-                  Already have an account?
-                </Text>
-                <Pressable onPress={() => navigation.navigate("Login")}>
-                  <Text className="text-sm font-medium text-primary">
-                    Login
-                  </Text>
-                </Pressable>
-              </View>
-
               <View className="gap-1.5">
-                <Text className="text-sm font-medium text-text">Username</Text>
+                <Text className="text-sm font-medium text-text dark:text-white">
+                  Username
+                </Text>
                 <TextInput
                   value={username}
                   onChangeText={setUsername}
                   autoCapitalize="none"
-                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text"
+                  placeholderTextColor="#94a3b8"
+                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text dark:border-slate-700 dark:text-white"
                 />
               </View>
 
               <View className="gap-1.5">
-                <Text className="text-sm font-medium text-text">Email</Text>
+                <Text className="text-sm font-medium text-text dark:text-white">
+                  Email
+                </Text>
                 <TextInput
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
                   keyboardType="email-address"
-                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text"
+                  placeholderTextColor="#94a3b8"
+                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text dark:border-slate-700 dark:text-white"
                 />
               </View>
 
               <View className="gap-1.5">
-                <Text className="text-sm font-medium text-text">Password</Text>
+                <Text className="text-sm font-medium text-text dark:text-white">
+                  Password
+                </Text>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry
-                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text"
+                  placeholderTextColor="#94a3b8"
+                  className="rounded-lg border border-border px-3 py-2.5 text-sm text-text dark:border-slate-700 dark:text-white"
                 />
               </View>
 
@@ -156,6 +161,17 @@ export default function RegisterScreen() {
               >
                 <Text className="text-sm font-medium text-white">
                   {isSubmitting ? "Registering..." : "Register"}
+                </Text>
+              </Pressable>
+            </View>
+
+            <View className="mt-6 flex-row justify-center gap-1">
+              <Text className="text-sm text-muted dark:text-slate-400">
+                Already have an account?
+              </Text>
+              <Pressable onPress={() => navigation.navigate("Login")}>
+                <Text className="text-sm font-medium text-primary dark:text-blue-400">
+                  Login
                 </Text>
               </Pressable>
             </View>

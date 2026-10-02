@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import type {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import {
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from "@react-navigation/native";
 import { getVacancyById, updateVacancy } from "../services/vacancyApi";
 import { getErrorMessage } from "../services/apiClient";
 import { type Vacancy } from "../types/vacancy";
 import VacancyForm from "../components/VacancyForm";
-import type { MyVacanciesStackParamList } from "../app/MyVacanciesStack";
 
-type Props = NativeStackScreenProps<MyVacanciesStackParamList, "EditVacancy">;
+type EditVacancyRouteParams = { EditVacancy: { id: string } };
 
-export default function EditVacancyScreen({ route }: Props) {
+export default function EditVacancyScreen() {
+  const route = useRoute<RouteProp<EditVacancyRouteParams, "EditVacancy">>();
   const { id } = route.params;
   const [data, setData] = useState<Vacancy | null>(null);
   const [status, setStatus] = useState<"loading" | "error" | "ready">(
@@ -21,9 +21,7 @@ export default function EditVacancyScreen({ route }: Props) {
   );
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<MyVacanciesStackParamList>>();
-
+  const navigation = useNavigation();
   useEffect(() => {
     let cancelled = false;
 

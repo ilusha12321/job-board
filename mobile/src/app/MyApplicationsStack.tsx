@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyApplicationsScreen from "../screens/MyApplicationsScreen";
 import VacancyDetailsScreen from "../screens/VacancyDetailsScreen";
 import type { VacanciesStackParamList } from "./VacanciesStack";
+import { useTheme } from "./ThemeContext";
 
 export type MyApplicationsStackParamList = {
   MyApplications: undefined;
@@ -11,8 +12,15 @@ export type MyApplicationsStackParamList = {
 const Stack = createNativeStackNavigator<MyApplicationsStackParamList>();
 
 export default function MyApplicationsStack() {
+  const { isDark } = useTheme();
+
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: isDark ? "#0f172a" : "#ffffff" },
+        headerTintColor: isDark ? "#ffffff" : "#0f172a",
+      }}
+    >
       <Stack.Screen
         name="MyApplications"
         component={MyApplicationsScreen}

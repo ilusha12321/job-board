@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyVacanciesScreen from "../screens/MyVacanciesScreen";
 import CreateVacancyScreen from "../screens/CreateVacancyScreen";
 import EditVacancyScreen from "../screens/EditVacancyScreen";
+import { useTheme } from "./ThemeContext";
 
 export type MyVacanciesStackParamList = {
   MyVacancies: undefined;
@@ -12,8 +13,16 @@ export type MyVacanciesStackParamList = {
 const Stack = createNativeStackNavigator<MyVacanciesStackParamList>();
 
 export default function MyVacanciesStack() {
+  const { isDark } = useTheme();
+
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: isDark ? "#0f172a" : "#ffffff" },
+        headerTintColor: isDark ? "#ffffff" : "#0f172a",
+        contentStyle: { backgroundColor: isDark ? "#020617" : "#f5f7fa" },
+      }}
+    >
       <Stack.Screen
         name="MyVacancies"
         component={MyVacanciesScreen}
