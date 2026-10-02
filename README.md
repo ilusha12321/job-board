@@ -16,33 +16,23 @@
 <img width="1460" height="872" alt="image" src="https://github.com/user-attachments/assets/360ab7eb-69d3-4728-a660-f33d2f63b356" />
 
 ### Список вакансій
-`<img width="1477" height="896" alt="image" src="https://github.com/user-attachments/assets/5b630393-121a-407c-bd16-ef691449107d" />`
+<img width="1477" height="896" alt="image" src="https://github.com/user-attachments/assets/5b630393-121a-407c-bd16-ef691449107d" />
 
 Cписок вакансій з пошуком та фільтрами.
 
-```
 <img width="1466" height="880" alt="image" src="https://github.com/user-attachments/assets/ed2d161f-e623-4934-8007-ddf25fb28e42" />
-
-```
 
 ### Деталі вакансії
 
-`<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/b36e1ec8-89ba-4469-aaa5-2684cb0623b7" />`
+<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/b36e1ec8-89ba-4469-aaa5-2684cb0623b7" />
 
 ### Особистий кабінет роботодавця
 
-`web-my-vacancies.png`
 
-Покажи створені вакансії роботодавця.
-
-```md
 <img width="1480" height="879" alt="image" src="https://github.com/user-attachments/assets/64e49c67-8351-4dc7-910c-6fe12c310a18" />
 
-```
-
 ### Відгуки кандидатів
-\
-`<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/a2994082-a941-448c-87ed-1b8f41f5c17f" />`
+<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/a2994082-a941-448c-87ed-1b8f41f5c17f" />
 
 
 # Mobile
@@ -51,35 +41,26 @@ Cписок вакансій з пошуком та фільтрами.
 
 ### Авторизація
 
-```md
 <img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/b07e7aaf-30cd-43b5-b6a8-821075b8601a" />
 
-```
-
 ### Список вакансій
-`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/31247f5c-0a63-4915-bdff-9cd4f1d1a499" />
-`
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/31247f5c-0a63-4915-bdff-9cd4f1d1a499" />
 
 ### Вакансії
 
-`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/5f710a9f-a27d-4de7-989e-d606d32c7202" />
-`
-
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/5f710a9f-a27d-4de7-989e-d606d32c7202" />
 
 ### Мої відгуки
 
-`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/e6f673e4-16a5-4ea8-8204-0412e425eaef" />
-`
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/e6f673e4-16a5-4ea8-8204-0412e425eaef" />
 
 ### Мої вакансії
 
-`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/bcda0316-a81f-4a72-9f7d-1a40153a6476" />
-`
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/bcda0316-a81f-4a72-9f7d-1a40153a6476" />
 
 ### Відгуки роботодавця
 
-`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/534856fe-5391-424d-bd96-938ef330058c" />
-`
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/534856fe-5391-424d-bd96-938ef330058c" />
 
 # Можливості
 
