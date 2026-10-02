@@ -1,532 +1,559 @@
-# hardwork
+# Job Board
 
-**Full-stack вебзастосунок для пошуку та створення вакансій.**
+**Job Board** — повноцінна інформаційна система для створення та пошуку вакансій.
 
-hardwork — інформаційна система створення та пошуку вакансій, яка об'єднує кандидатів і роботодавців в одному застосунку.
+Проєкт складається з **Web-додатку**, **мобільного застосунку**, **REST API** та **PostgreSQL**.
 
-Кандидати можуть знаходити вакансії, переглядати детальну інформацію та подавати заявки з резюме. Роботодавці можуть створювати й керувати власними вакансіями, переглядати кандидатів та змінювати статуси заявок.
-
-Проєкт побудований як full-stack застосунок із використанням **React, TypeScript, Node.js, Express та PostgreSQL**.
+Користувачі можуть реєструватися як шукачі роботи або роботодавці, переглядати вакансії, подавати відгуки, керувати вакансіями та переглядати кандидатів.
 
 ---
 
-## Preview
+# Демонстрація
 
-<img width="1492" height="881" alt="image" src="https://github.com/user-attachments/assets/413392ac-916a-48b1-a400-4593e4ba8645" />
+## Web
 
-<img width="1425" height="904" alt="image" src="https://github.com/user-attachments/assets/c85a91a7-0580-4cc3-9ffc-fed40c69d5a3" />
+### Головна сторінка
+`<img width="1460" height="872" alt="image" src="https://github.com/user-attachments/assets/360ab7eb-69d3-4728-a660-f33d2f63b356" />`
+
+### Список вакансій
+`<img width="1477" height="896" alt="image" src="https://github.com/user-attachments/assets/5b630393-121a-407c-bd16-ef691449107d" />`
+
+Cписок вакансій з пошуком та фільтрами.
+
+```
+<img width="1466" height="880" alt="image" src="https://github.com/user-attachments/assets/ed2d161f-e623-4934-8007-ddf25fb28e42" />
+
+```
+
+### Деталі вакансії
+
+`<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/b36e1ec8-89ba-4469-aaa5-2684cb0623b7" />`
+
+### Особистий кабінет роботодавця
+
+`web-my-vacancies.png`
+
+Покажи створені вакансії роботодавця.
+
+```md
+<img width="1480" height="879" alt="image" src="https://github.com/user-attachments/assets/64e49c67-8351-4dc7-910c-6fe12c310a18" />
+
+```
+
+### Відгуки кандидатів
+\
+`<img width="1434" height="815" alt="image" src="https://github.com/user-attachments/assets/a2994082-a941-448c-87ed-1b8f41f5c17f" />`
 
 
-## Features
+# Mobile
 
-### Authentication
+Мобільний застосунок розроблений на **React Native + Expo** та використовує той самий REST API, що й Web-версія.
 
-* реєстрація та авторизація користувачів;
-* JWT authentication;
-* authentication через HTTP-only cookies;
-* вихід із системи;
-* дві ролі користувачів: `jobseeker` та `employer`;
-* захист приватних маршрутів;
-* role-based access control.
+### Авторизація
 
-### Vacancies
+```md
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/b07e7aaf-30cd-43b5-b6a8-821075b8601a" />
 
-* перегляд списку вакансій;
-* пошук вакансій за назвою;
-* фільтрація за локацією;
-* фільтрація за типом зайнятості;
-* перегляд детальної інформації;
-* створення вакансій;
-* редагування вакансій;
-* видалення вакансій;
-* доступ до редагування та видалення тільки для автора вакансії.
+```
 
-### Job Seeker
+### Список вакансій
+`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/31247f5c-0a63-4915-bdff-9cd4f1d1a499" />
+`
 
-Користувач із роллю `jobseeker` може:
+### Вакансії
 
-* переглядати вакансії;
-* шукати та фільтрувати вакансії;
-* переглядати детальну інформацію;
-* подавати заявки;
-* прикріплювати резюме у форматах PDF, DOC та DOCX;
-* переглядати власні заявки;
-* скасовувати власні заявки;
-* відстежувати статус заявки.
+`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/5f710a9f-a27d-4de7-989e-d606d32c7202" />
+`
 
-Повторна заявка одного користувача на одну вакансію не створюється.
 
-### Employer
+### Мої відгуки
 
-Користувач із роллю `employer` може:
+`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/e6f673e4-16a5-4ea8-8204-0412e425eaef" />
+`
 
-* створювати вакансії;
-* редагувати власні вакансії;
-* видаляти власні вакансії;
-* переглядати заявки на власні вакансії;
-* переглядати інформацію про кандидатів;
-* завантажувати резюме кандидатів;
-* змінювати статус заявки.
+### Мої вакансії
 
-### Applications
+`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/bcda0316-a81f-4a72-9f7d-1a40153a6476" />
+`
 
-Система заявок пов'язує кандидата з конкретною вакансією.
+### Відгуки роботодавця
 
-Кожна заявка містить:
+`<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/534856fe-5391-424d-bd96-938ef330058c" />
+`
 
-* користувача;
-* вакансію;
-* дату подачі;
-* статус;
-* прикріплене резюме, якщо воно було додане.
+# Можливості
 
-Доступні статуси:
+## Шукач роботи
 
-* `delivered`
-* `reviewed`
-* `invite for interview`
+* Реєстрація та авторизація
+* Перегляд вакансій
+* Пошук вакансій
+* Фільтрація за локацією
+* Фільтрація за типом зайнятості
+* Перегляд деталей вакансії
+* Відгук на вакансію
+* Додавання резюме до відгуку
+* Перегляд власних відгуків
+* Перегляд статусу відгуку
+* Скасування відгуку
+
+## Роботодавець
+
+* Реєстрація та авторизація
+* Створення вакансій
+* Редагування вакансій
+* Видалення вакансій
+* Перегляд власних вакансій
+* Перегляд відгуків кандидатів
+* Фільтрація відгуків за статусом
+* Перегляд резюме кандидатів
+* Зміна статусу відгуку
 
 ---
 
-## Technologies
+# Мобільний застосунок
 
-### Frontend
+Мобільна версія знаходиться в директорії:
 
-* React 19
+```text
+mobile/
+```
+
+Вона реалізована за допомогою:
+
+* React Native
+* Expo
+* TypeScript
+* React Navigation
+* NativeWind
+* i18next
+* react-i18next
+
+Мобільний застосунок використовує той самий Backend API, що й Web-версія.
+
+### Додаткові можливості Mobile
+
+* Світла тема
+* Темна тема
+* Українська локалізація
+* Англійська локалізація
+* Навігація залежно від ролі користувача
+* Робота з резюме
+* Перегляд та керування відгуками
+
+---
+
+# Технології
+
+## Web
+
+* React
 * TypeScript
 * Vite
 * React Router
 * Tailwind CSS
 * Context API
-* Fetch API
-* REST API
 
-### Backend
+## Mobile
+
+* React Native
+* Expo
+* TypeScript
+* React Navigation
+* NativeWind
+* i18next
+* react-i18next
+* Expo Document Picker
+* Expo Sharing
+
+## Backend
 
 * Node.js
 * Express
 * TypeScript
-* PostgreSQL
 * JWT
-* HTTP-only cookies
-* REST API
+* bcrypt
+* Zod
 * Multer
-
-### Development
-
-* Git
-* GitHub
-* ESLint
-* npm
-
----
-
-## Architecture
-
-Проєкт розділений на frontend, backend та database частини:
-
-```text
-job-board
-│
-├── src
-│   ├── app
-│   │   ├── AuthContext
-│   │   ├── ProtectedRoute
-│   │   └── router
-│   │
-│   ├── components
-│   │   ├── Layout
-│   │   ├── VacancyCard
-│   │   └── VacancyForm
-│   │
-│   ├── pages
-│   │   ├── HomePage
-│   │   ├── LoginPage
-│   │   ├── RegisterPage
-│   │   ├── VacanciesPage
-│   │   ├── VacancyDetailsPage
-│   │   ├── CreateVacancyPage
-│   │   ├── EditVacancyPage
-│   │   ├── MyApplicationsPage
-│   │   └── EmployerApplicationsPage
-│   │
-│   ├── services
-│   │   ├── authApi
-│   │   ├── vacancyApi
-│   │   └── applicationApi
-│   │
-│   └── types
-│
-├── backend
-│   └── src
-│       ├── routes
-│       ├── middleware
-│       ├── db
-│       └── types
-│
-├── database
-│   └── schema.sql
-│
-└── package.json
-```
-
-### Frontend
-
-Frontend відповідає за UI, маршрутизацію, роботу зі станом та взаємодію з backend API.
-
-#### `app`
-
-Містить глобальну логіку застосунку:
-
-* authentication context;
-* protected routes;
-* React Router configuration.
-
-#### `components`
-
-Перевикористовувані компоненти:
-
-* `Layout`;
-* `VacancyCard`;
-* `VacancyForm`.
-
-#### `pages`
-
-Основні сторінки застосунку:
-
-* `HomePage`;
-* `LoginPage`;
-* `RegisterPage`;
-* `VacanciesPage`;
-* `VacancyDetailsPage`;
-* `CreateVacancyPage`;
-* `EditVacancyPage`;
-* `MyApplicationsPage`;
-* `EmployerApplicationsPage`.
-
-#### `services`
-
-Містить логіку взаємодії frontend з REST API:
-
-* authentication;
-* vacancies;
-* applications.
-
-#### `types`
-
-TypeScript-типи основних сутностей застосунку.
-
----
-
-## Backend
-
-Backend побудований на **Node.js + Express + TypeScript**.
-
-Він відповідає за:
-
-* authentication;
-* authorization;
-* роботу з PostgreSQL;
-* CRUD операції з вакансіями;
-* створення та керування заявками;
-* перевірку прав доступу;
-* завантаження резюме;
-* отримання резюме кандидатів.
-
----
+* Helmet
+* CORS
+* express-rate-limit
 
 ## Database
 
-Для зберігання даних використовується **PostgreSQL**.
+* PostgreSQL
 
-Основні таблиці:
+---
+
+#  Архітектура
 
 ```text
-users
-  │
-  ├── vacancies
-  │
-  └── applications
-          │
-          └── vacancies
+                    ┌──────────────────┐
+                    │   PostgreSQL     │
+                    └────────▲─────────┘
+                             │
+                             │
+                    ┌────────┴─────────┐
+                    │     Backend      │
+                    │  Node.js/Express │
+                    └────────▲─────────┘
+                             │
+                    ┌────────┴─────────┐
+                    │     REST API     │
+                    └───────▲───▲──────┘
+                            │   │
+              ┌─────────────┘   └─────────────┐
+              │                               │
+      ┌───────┴────────┐             ┌────────┴────────┐
+      │      Web       │             │      Mobile     │
+      │ React + Vite   │             │ React Native    │
+      └────────────────┘             └─────────────────┘
 ```
 
-### `users`
-
-Зберігає інформацію про користувачів та їхні ролі.
-
-### `vacancies`
-
-Зберігає вакансії та інформацію про роботодавця, який їх створив.
-
-### `applications`
-
-Зберігає заявки кандидатів на вакансії, статуси та інформацію про прикріплені резюме.
-
-Зв'язки між таблицями використовуються для забезпечення цілісності даних та контролю доступу до ресурсів.
+Web та Mobile використовують спільний Backend API та одну базу даних PostgreSQL.
 
 ---
 
-## Application Flow
+# Авторизація та безпека
 
-Процес подачі заявки:
+Для авторизації використовується **JWT**.
+
+У Web-версії JWT зберігається в **HTTP-only cookie**.
+
+Основний процес:
 
 ```text
-Job Seeker
-    │
-    │ selects vacancy
-    ▼
-Vacancy Details
-    │
-    │ submit application
-    ▼
-POST /api/applications
-    │
-    ├── user_id
-    ├── vacancy_id
-    ├── status
-    └── resume
-    │
-    ▼
-PostgreSQL
-    │
-    ▼
-Employer Applications
-    │
-    └── status update
+Реєстрація / Вхід
+        ↓
+Перевірка даних
+        ↓
+Створення JWT
+        ↓
+HTTP-only cookie
+        ↓
+Запит до захищеного API
+        ↓
+Authentication middleware
+        ↓
+Перевірка користувача та ролі
 ```
 
-Перед створенням заявки backend перевіряє, чи не подав користувач заявку на цю вакансію раніше.
-
-Після подачі заявки роботодавець може переглянути кандидата та змінити статус заявки.
-
----
-
-## API
-
-Frontend взаємодіє з backend через REST API.
-
-### Authentication
-
-```http
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/logout
-GET  /api/auth/me
-```
-
-### Vacancies
-
-```http
-GET    /api/vacancies
-GET    /api/vacancies/:id
-POST   /api/vacancies
-PUT    /api/vacancies/:id
-DELETE /api/vacancies/:id
-```
-
-### Applications
-
-```http
-POST   /api/applications
-GET    /api/applications/my
-GET    /api/applications/employer
-DELETE /api/applications/:vacancyId
-PATCH  /api/applications/:id/status
-GET    /api/applications/:id/resume
-```
-
-Приватні API-операції захищені authentication та role-based authorization.
-
----
-
-## Protected Routes
-
-Frontend використовує `ProtectedRoute` для обмеження доступу до приватних сторінок.
+Доступні ролі:
 
 ```text
 jobseeker
-└── My Applications
-
 employer
-├── Create Vacancy
-└── Edit Vacancy
 ```
 
-Додатково backend перевіряє права користувача, тому захист не обмежується лише frontend.
+Backend перевіряє права доступу незалежно від frontend.
+
+Використовуються:
+
+* bcrypt для хешування паролів
+* JWT
+* HTTP-only cookies
+* Zod validation
+* Helmet
+* CORS
+* rate limiting
+* перевірка ролей
+* перевірка власника вакансії
+* перевірка завантажених файлів
 
 ---
 
-## Resume Upload
+# Резюме
 
-Кандидат може прикріпити резюме під час подачі заявки.
+До відгуку можна додати резюме.
 
-Підтримувані формати:
+Підтримуються формати:
 
-* PDF
-* DOC
-* DOCX
+```text
+PDF
+DOC
+DOCX
+```
 
-Файл передається на backend через `multipart/form-data`.
-<img width="1432" height="825" alt="image" src="https://github.com/user-attachments/assets/37ac2ee9-1740-4df4-ac0a-54ae2be64e46" />
+Максимальний розмір:
 
-Роботодавець може отримати резюме кандидата зі сторінки заявок.
+```text
+5 MB
+```
 
-<img width="1458" height="906" alt="image" src="https://github.com/user-attachments/assets/566142a2-e21d-49a2-8966-18e9c2839a4b" />
-
-
-## Responsive Design
-
-Інтерфейс адаптований для різних розмірів екрана:
-
-* desktop;
-* tablet;
-* mobile.
-
-UI побудований з використанням Tailwind CSS та responsive utilities.
+Файли проходять перевірку типу та розширення.
 
 ---
 
-## Installation
+# База даних
 
-### 1. Clone repository
+Проєкт використовує PostgreSQL.
+
+Основні сутності:
+
+```text
+Users
+   │
+   ├── Vacancies
+   │
+   └── Applications
+           │
+           └── Vacancies
+```
+
+У базі використовуються:
+
+* Primary Keys
+* Foreign Keys
+* Unique Constraints
+* Check Constraints
+* Indexes
+* Cascade Deletes
+
+Для запобігання повторним відгукам використовується обмеження на пару:
+
+```text
+user_id + vacancy_id
+```
+
+---
+
+# API
+
+Основні API-розділи:
+
+```text
+/api/auth
+/api/vacancies
+/api/applications
+```
+
+## Authentication
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+POST /api/auth/logout
+```
+
+## Vacancies
+
+API підтримує:
+
+* отримання вакансій
+* отримання конкретної вакансії
+* створення вакансій
+* редагування вакансій
+* видалення вакансій
+* отримання власних вакансій роботодавця
+
+## Applications
+
+API підтримує:
+
+* створення відгуку
+* перегляд власних відгуків
+* скасування відгуку
+* перегляд відгуків роботодавцем
+* зміну статусу
+* отримання резюме кандидата
+
+---
+
+#  Структура проєкту
+
+```text
+job-board/
+│
+├── backend/
+│   ├── src/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── db.ts
+│   │   ├── schemas.ts
+│   │   └── index.ts
+│   └── package.json
+│
+├── database/
+│   └── schema.sql
+│
+├── mobile/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── i18n/
+│   │   ├── screens/
+│   │   ├── services/
+│   │   └── types/
+│   ├── App.tsx
+│   └── package.json
+│
+├── src/
+│   ├── app/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   └── types/
+│
+├── package.json
+└── README.md
+```
+
+---
+
+# Встановлення
+
+## 1. Клонування
 
 ```bash
 git clone https://github.com/ilusha12321/job-board.git
 cd job-board
 ```
 
-### 2. Install frontend dependencies
+## 2. Web
 
 ```bash
 npm install
 ```
 
-### 3. Install backend dependencies
+## 3. Backend
 
 ```bash
 cd backend
 npm install
+cd ..
 ```
 
-### 4. Configure environment variables
+## 4. Mobile
 
-Створіть файл:
+```bash
+cd mobile
+npm install
+cd ..
+```
+
+---
+
+# Environment Variables
+
+Для Backend створіть:
 
 ```text
 backend/.env
 ```
 
-та додайте необхідні змінні середовища для PostgreSQL і JWT.
+Приклад:
 
-### 5. Configure PostgreSQL
+```env
+PORT=3000
+DATABASE_URL=postgresql://postgres:password@localhost:5432/job_board
+JWT_SECRET=your_secret_key
+CLIENT_URL=http://localhost:5173
+```
 
-Створіть базу даних PostgreSQL та виконайте SQL-скрипт:
+Не додавайте `.env` та реальні секрети до Git.
+
+---
+
+# PostgreSQL
+
+Створіть базу даних:
+
+```text
+job_board
+```
+
+Після цього застосуйте схему:
 
 ```text
 database/schema.sql
 ```
 
-### 6. Start backend
-
-У папці `backend`:
-
-```bash
-npm run dev
-```
-
-### 7. Start frontend
-
-В іншому терміналі, з кореня проєкту:
-
-```bash
-npm run dev
-```
-
-Після запуску відкрийте адресу, яку покаже Vite.
+PostgreSQL повинен бути запущений перед запуском Backend.
 
 ---
 
-## Available Scripts
+# Запуск
 
-### Frontend
+## Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+Backend:
+
+```text
+http://localhost:3000
+```
+
+## Web
+
+У кореневій директорії:
 
 ```bash
 npm run dev
 ```
 
-Запуск development server.
+## Mobile
 
 ```bash
-npm run build
+cd mobile
+npx expo start
 ```
 
-Створення production build.
+Для тестування можна використовувати:
 
-```bash
-npm run lint
-```
+* Expo Go
+* Android Emulator
+* iOS Simulator
 
-Перевірка коду за допомогою ESLint.
-
-```bash
-npm run preview
-```
-
-Перегляд production build локально.
-
-### Backend
-
-```bash
-npm run dev
-```
-
-Запуск backend у development mode.
-
-```bash
-npm run build
-```
-
-Створення production build.
+Під час запуску на фізичному смартфоні Backend має бути доступний у локальній мережі.
 
 ---
 
-## Project Goals
+#  Мета проєкту
 
-Під час розробки проєкту я практикую:
+Проєкт створений як практична full-stack система для роботи з:
 
-* React Components;
-* React Hooks;
-* Context API;
-* TypeScript;
-* React Router;
-* REST API;
-* asynchronous JavaScript;
-* Node.js;
-* Express;
-* PostgreSQL;
-* JWT authentication;
-* HTTP-only cookies;
-* role-based access control;
-* CRUD operations;
-* file upload;
-* form handling;
-* state management;
-* reusable components;
-* Git / GitHub;
-* структурування full-stack проєкту.
+* React
+* TypeScript
+* React Native
+* Node.js
+* Express
+* REST API
+* PostgreSQL
+* JWT
+* авторизацією та ролями
+* завантаженням файлів
+* валідацією даних
+* мобільною навігацією
+* локалізацією
+* світлою та темною темами
+
+Основна мета — реалізувати повноцінний продукт із Web та Mobile клієнтами, спільним Backend API та базою даних.
 
 ---
 
-## Future Improvements
+# Подальший розвиток
 
-* pagination для вакансій;
-* сортування вакансій;
-* сторінка профілю користувача;
-* розширене керування профілем роботодавця;
-* email notifications;
-* password recovery;
-* deployment frontend та backend;
-* production database configuration.
+Можливі подальші покращення:
 
+* Production deployment
+* Server-side pagination
+* розширені фільтри вакансій
+* автоматизовані тести
+* CI/CD
+* Production file storage
+* push-сповіщення
+* покращена offline-підтримка Mobile
+* моніторинг та логування
 
+---
+
+#  Репозиторій
+
+GitHub:
+
+https://github.com/ilusha12321/job-board
